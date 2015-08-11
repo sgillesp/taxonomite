@@ -10,8 +10,8 @@ Gem::Specification.new do |s|
   s.authors     = ["sgillesp"]
   s.email       = ["masterofratios@gmail.com"]
   s.homepage    = "http://github.com/sgillesp/places"
-  s.summary     = "Manages objects which are classified within a taxonomy, and enforces a hierarchical tree structure. Works with MongoDB."
-  s.description = "Manages objects which are classified within a taxonomy, and enforces a hierarchical tree structure. Works with MongoDB currently - may try to abstract the database layer with later versions."
+  s.summary     = "Manages objects classified within a taxonomy and enforces a hierarchical tree structure. Persently works only with MongoDB."
+  s.description = "Manages objects classified within a taxonomy and enforces a hierarchical tree structure. Works only with MongoDB currently - may try to abstract the database layer with later versions."
   s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
