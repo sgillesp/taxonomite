@@ -1,0 +1,6 @@
+    <li><%= link_to "#{node.typeifiedname} (#{node.entity_type})", taxon_path(node) %></li>
+    <% if node.has_children? %>
+    <div class="nested_taxon">
+        <%= render partial: 'taxon', collection: node.children, as: :node %>
+    </div>
+    <% end %>

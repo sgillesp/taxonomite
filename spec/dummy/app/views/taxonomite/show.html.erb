@@ -1,0 +1,28 @@
+<h2> Info on a taxon</h2>
+<% if @taxon %>
+    <ul>
+
+        <p>Name:        <%= link_to @taxon.typeifiedname, taxonomite_path(@taxon) %></p>
+        <p>Type:        <%= @taxon.entity_type %></p>
+        <p>Description: <%= @taxon.description %></p>
+        <p>Population:  <%= @taxon.aggregate_leaves("isperson?") %>
+
+        <% if @taxon.parent %>
+        <h3>Parent:</h3>
+            <li><%= link_to @taxon.parent.name, taxon_path(@taxon.parent) %></li>
+        <% end %>
+
+        <% if @taxon.has_children? %>
+            <h3>Children:</h3>
+            <%= render partial: 'taxon', collection: @taxon.children, as: :node %>
+        <% end %>
+
+    </ul>
+<% else %>
+    <p>Unable to find a Taxon.</p>
+<% end %>
+
+<br/>
+  <ul>
+  <li><%= link_to "Edit this taxon", edit_taxonomite_path(@taxon) %></li>
+  </ul>

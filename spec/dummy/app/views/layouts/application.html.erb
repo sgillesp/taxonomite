@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dummy</title>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+
+<%= display_flash_messages %>
+<%= display_flash_errors %>
+
+<%= yield %>
+
+<ul>
+<li><%= link_to "Select a Taxon", taxonomite_index_path %></li>
+<li><%= link_to "Create a new Taxon", new_taxonomite_path %></li>
+</ul>
+
+</body>
+</html>

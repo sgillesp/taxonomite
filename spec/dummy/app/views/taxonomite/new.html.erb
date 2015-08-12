@@ -1,0 +1,16 @@
+<h1>Create a new taxon:</h1>
+
+<%= form_for @taxon, :url => { :action => :create } do |f| %>
+    <%= render 'shared/error_messages' %>
+
+    <p>
+        <%= f.label :name %><br />
+        <%= f.text_field :name %>
+    </p>
+    <p>
+        <%= f.label :description %><br />
+        <%= f.text_field :description %>
+    </p>
+
+    <%= f.submit "Create" %>
+<% end %>

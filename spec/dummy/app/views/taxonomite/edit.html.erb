@@ -1,0 +1,49 @@
+<h2> Edit a taxon</h2>
+<% if @taxon %>
+    <ul>
+        <%= form_for @taxon, :url => { :action => :update } do |f| %>
+            <%= f.label :name, "Name:" %>
+            <%= f.text_field :name %> <br />
+            <p><%= f.label :description, "Description:" %>
+                <div verticalalign="top">
+                    <p><%= f.text_area :description, :rows => 5, :cols => 50  %><p/>
+                </div>
+            </p>
+            <p><%= f.submit "Submit", :disable_with => 'Submitting...' %></p>
+        <% end %>
+    </ul>
+        <%= link_to "Delete #{@taxon.name}.", controller: :taxonomite, action: :destroy, id: @taxon.id %>
+    <ul>
+
+    </ul>
+
+    <% if @taxon.parent %>
+    <h3>Parent:</h3>
+    <ul>
+        <li><%= link_to @taxon.parent.name, taxonomite_path(@taxon.parent) %>
+            <%= link_to 'break', ['taxon', :breakparent, :id => @taxon] %></li>
+    </ul>
+    <% end %>
+
+    <% if @taxon.children.length > 0 %>
+    <h3>Children:</h3>
+    <ul>
+        <% for child in @taxon.children do %>
+            <li><%= link_to child.name, taxonomite_path(child.id) %>
+                <%= link_to 'Remove', ['taxon', :remchild, :taxon => child] %></li>
+        <% end %>
+    </ul>
+    <% end %>
+
+    <h3>Add children:</h3>
+    <ul>
+        <% for p in Taxonomite::Taxon.all.each do %>
+            <% unless p == @taxon || @taxon.children.find(p) %>
+                <li><%= p.name %>  (<%= p.entity_type %>) -- <%= link_to 'Add', ['taxon', :addchild, :taxon => p] %></li>
+            <% end %>
+        <% end %>
+    </ul>
+
+<% else %>
+    <p>Unable to find a taxon.</p>
+<% end %>

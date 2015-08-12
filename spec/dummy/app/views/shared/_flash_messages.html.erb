@@ -1,0 +1,9 @@
+<div class="flash-messages">
+    <% if messages %>
+        <% messages.each do |key, message| %>
+            <%= content_tag :div, message, :id => "flash_${name}" %>
+        <% end %>
+    <% else %>
+        No Messages to display
+    <% end %>
+</div>
