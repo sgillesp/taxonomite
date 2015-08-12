@@ -9,11 +9,11 @@ require "action_mailer/railtie"
 require "action_view/railtie"
 require "sprockets/railtie"
 require "mongoid"
+require "factory_girl_rails"
 # require "rails/test_unit/railtie"
 
 Bundler.require(*Rails.groups)
 require "taxonomite"
-require "../models/taxonomite/zoology"
 
 # I hate this as its a specified path; get all the factories
 Dir["#{File.dirname(__FILE__)}/../../factories/*.rb"].each { |f| require f }
