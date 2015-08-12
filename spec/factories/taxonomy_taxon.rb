@@ -2,7 +2,7 @@
 require 'faker'
 
 FactoryGirl.define do
-  factory :taxonomite_taxon, :class => 'Taxonomite::Taxon' do
+  factory :taxonomite_node, :class => 'Taxonomite::Node' do
     name { Faker::Lorem.word.capitalize }
     description { Faker::Lorem.paragraph }
   end

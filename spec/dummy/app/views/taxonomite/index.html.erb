@@ -1,9 +1,9 @@
-<h2>Select a taxon</h2>
+<h2>Select a node</h2>
 
-<% if @taxons %>
-    <% for taxon in @taxons %>
-        <p><%= link_to taxon.name, taxonomite_path(taxon) %> (<%= taxon.entity_type %>):  <%= taxon.description %></p>
+<% if @nodes %>
+    <% for node in @nodes %>
+        <p><%= link_to node.name, taxonomite_path(node) %> (<%= node.entity_type %>):  <%= node.description %></p>
     <% end %>
 <% else %>
-    <p>No taxons defined.</p>
+    <p>No nodes defined.</p>
 <% end %>

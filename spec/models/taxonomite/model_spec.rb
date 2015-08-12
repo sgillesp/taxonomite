@@ -5,32 +5,32 @@ module Taxonomite
     RSpec.describe Tree, type: :model do
 
         context 'model function' do
-            let!(:taxon) { build(:taxonomite_taxon) }
+            let!(:node) { build(:taxonomite_node) }
 
-            it 'instantiates a taxon' do
-                expect(taxon.class.name).to eq("Taxonomite::Taxon")
+            it 'instantiates a node' do
+                expect(node.class.name).to eq("Taxonomite::Node")
             end
 
-            it 'destroys a taxon' do
-                expect { taxon.destroy }.not_to raise_error
+            it 'destroys a node' do
+                expect { node.destroy }.not_to raise_error
             end
 
             it 'sets the name' do
-                taxon.name = "new_name"
-                expect(taxon.name).to eq("new_name")
+                node.name = "new_name"
+                expect(node.name).to eq("new_name")
             end
 
             it 'sets the description' do
-                taxon.description = "new_description"
-                expect(taxon.description).to eq("new_description")
+                node.description = "new_description"
+                expect(node.description).to eq("new_description")
             end
 
             it 'allow access to children' do
-                expect { taxon.children }.not_to raise_error
+                expect { node.children }.not_to raise_error
             end
 
             it 'allow access to parent' do
-                expect { taxon.parent }.not_to raise_error
+                expect { node.parent }.not_to raise_error
             end
 
         end

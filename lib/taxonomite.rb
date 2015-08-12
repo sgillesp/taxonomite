@@ -1,7 +1,5 @@
-#require "taxonomite/engine"
-require 'taxonomite/taxon'
-#require 'taxonomite/location'
-#require 'taxonomite/util'
+require 'taxonomite/node'
+require 'taxonomite/entity'
 
 # Taxonomite module
 module Taxonomite

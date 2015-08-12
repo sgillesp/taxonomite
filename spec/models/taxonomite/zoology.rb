@@ -2,7 +2,7 @@
 require 'taxonomite/entity'
 
 module Taxonomite
-  class Kingdom < Taxonomite::Taxon
+  class Kingdom < Taxonomite::Node
 
     protected
     def get_entity_type
@@ -15,7 +15,7 @@ module Taxonomite
 
   end   # class Kingdom
 
-  class Phylum < ::Taxonomite::Taxon
+  class Phylum < ::Taxonomite::Node
 
     protected
     def get_entity_type
@@ -27,7 +27,7 @@ module Taxonomite
     end
   end
 
-  class Class < ::Taxonomite::Taxon
+  class Class < ::Taxonomite::Node
 
     protected
     def get_entity_type
@@ -39,7 +39,7 @@ module Taxonomite
     end
   end
 
-  class Order < ::Taxonomite::Taxon
+  class Order < ::Taxonomite::Node
 
     protected
     def get_entity_type
@@ -51,7 +51,7 @@ module Taxonomite
     end
   end
 
-  class Family < ::Taxonomite::Taxon
+  class Family < ::Taxonomite::Node
 
     protected
     def get_entity_type
@@ -63,7 +63,7 @@ module Taxonomite
     end
   end
 
-  class Genus < ::Taxonomite::Taxon
+  class Genus < ::Taxonomite::Node
 
     protected
     def get_entity_type
@@ -75,7 +75,7 @@ module Taxonomite
     end
   end
 
-  class Species < ::Taxonomite::Taxon
+  class Species < ::Taxonomite::Node
 
     def countme
       return 1

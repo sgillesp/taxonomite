@@ -1,44 +1,44 @@
 require_dependency "application_controller"
 require 'mongoid'
-require 'taxonomite/taxon'
+require 'taxonomite/node'
 include Taxonomite
 
 class TaxonomiteController < ApplicationController
 
     def index
-        @taxons = Taxon.all
+        @nodes = Node.all
     end
 
     def new
-        @taxon = Taxon.new
+        @node = Node.new
     end
 
     def destroy
         poop
-        @taxon = Taxon.find(params)
+        @node = Node.find(params)
         poop
-        if @taxon != nil
-            @taxon.delete
-            flash[:message] = "Deleted #{@taxon.name}"
+        if @node != nil
+            @node.delete
+            flash[:message] = "Deleted #{@node.name}"
             redirect_to :action => :index
         else
-            redirect_to :action => :edit, :id => params[:id], :error => "Unable to find taxon #{:id}"
+            redirect_to :action => :edit, :id => params[:id], :error => "Unable to find node #{:id}"
         end
     end
 
     def create
-        @taxon = Taxon.new(taxon_params)
-        if @taxon.save
-            redirect_to :action => 'show', :id => @taxon.id, :notice => "Created #{@taxon.name}"
+        @node = Node.new(node_params)
+        if @node.save
+            redirect_to :action => 'show', :id => @node.id, :notice => "Created #{@node.name}"
         else
             render 'new'
         end
     rescue Moped::Errors::OperationFailure => err
         # check for the appropriate error message indicating a duplicate index
         if err.message =~ /11000/
-            @taxons.errors.add(:taxon_name, "alread exists for another Taxon")
+            @nodes.errors.add(:node_name, "alread exists for another node")
         else
-            @taxons.errors.add(:base, err.message)
+            @nodes.errors.add(:base, err.message)
         end
 
         render 'new'
@@ -47,56 +47,56 @@ class TaxonomiteController < ApplicationController
     def show
         # must have a valid :id to show that
         if params[:id] == nil
-            flash[:message] = "No such Taxon in database"
+            flash[:message] = "No such node in database"
             render 'index'
             return
         end
 
-        # try to find the taxon, but catch if the taxon cannot be found
-        @taxon = Taxon.find(params[:id])
+        # try to find the node, but catch if the node cannot be found
+        @node = Node.find(params[:id])
 
     rescue ::Mongoid::Errors::DocumentNotFound => err
-        flash[:error] = "No such Taxon in database."
+        flash[:error] = "No such node in database."
         render 'index'
     rescue ::Moped::Errors::OperationFailure => err
         # check for the appropriate error message indicating a duplicate index
         # if err.message =~ /name_index/
-        #     @taxon.errors.add(:email, "already exists for another account")
+        #     @node.errors.add(:email, "already exists for another account")
         # else
-        #     @taxon.errors.add(:base, err.message)
+        #     @node.errors.add(:base, err.message)
         # end
-        flash[:message] = "Duplicate entry for Taxon"
+        flash[:message] = "Duplicate entry for node"
 
         render 'index'
     end
 
     def edit
-        # try to find the taxon, but catch if the taxon cannot be found
-        @taxon = Taxon.find(params[:id])
+        # try to find the node, but catch if the node cannot be found
+        @node = Node.find(params[:id])
 
     rescue ::Mongoid::Errors::DocumentNotFound => err
-        flash[:error] = "No such Taxon in database."
+        flash[:error] = "No such node in database."
         render 'index'
     rescue ::Moped::Errors::OperationFailure => err
         # check for the appropriate error message indicating a duplicate index
         # if err.message =~ /name_index/
-        #     @taxon.errors.add(:email, "already exists for another account")
+        #     @node.errors.add(:email, "already exists for another account")
         # else
-        #     @taxon.errors.add(:base, err.message)
+        #     @node.errors.add(:base, err.message)
         # end
-        flash[:message] = "Duplicate entry for Taxon"
+        flash[:message] = "Duplicate entry for node"
 
         render 'index'
     end
 
     def update
-        # try to find the taxon, but catch if the taxon cannot be found
-        @taxon = Taxon.find(params[:id])
-        if @taxon.update_attributes(taxon_params)
-            if @taxon.save
-                redirect_to :action => 'show', :id => @taxon.id, :notice => "Created #{@taxon.name}"
+        # try to find the node, but catch if the node cannot be found
+        @node = Node.find(params[:id])
+        if @node.update_attributes(node_params)
+            if @node.save
+                redirect_to :action => 'show', :id => @node.id, :notice => "Created #{@node.name}"
             else
-                redirect_to(:action => 'show', :id => @taxon.id, :error => "Utter failure".red)
+                redirect_to(:action => 'show', :id => @node.id, :error => "Utter failure".red)
             end
         else
             puts "BAD NEWS".red.bold
@@ -104,39 +104,39 @@ class TaxonomiteController < ApplicationController
         end
 
     rescue ::Mongoid::Errors::DocumentNotFound => err
-        flash[:error] = "No such Taxon in database."
+        flash[:error] = "No such node in database."
         render 'edit'
     rescue ::Moped::Errors::OperationFailure => err
         # check for the appropriate error message indicating a duplicate index
         # if err.message =~ /name_index/
-        #     @taxon.errors.add(:email, "already exists for another account")
+        #     @node.errors.add(:email, "already exists for another account")
         # else
-        #     @taxon.errors.add(:base, err.message)
+        #     @node.errors.add(:base, err.message)
         # end
-        flash[:message] = "Duplicate entry for Taxon"
+        flash[:message] = "Duplicate entry for node"
 
         render 'edit'
     end
 
     def addchild
-        @taxon = Taxon.find(params[:id])
-        if @taxon
-            child = Taxon.find(params[:taxon])
+        @node = Node.find(params[:id])
+        if @node
+            child = Node.find(params[:node])
             if child
                 if do_addchild(child)
-                    if @taxon.save()
-                        flash[:message] = "#{child.name} added to #{@taxon.name}"
+                    if @node.save()
+                        flash[:message] = "#{child.name} added to #{@node.name}"
                     else
-                        flash[:error] = "unable to save #{@taxon.name}, after attempted addition of child #{child.name}"
+                        flash[:error] = "unable to save #{@node.name}, after attempted addition of child #{child.name}"
                     end
                 else
-                    flash[:error] = "unable to add #{child.name} to #{@taxon.name}"
+                    flash[:error] = "unable to add #{child.name} to #{@node.name}"
                 end
             else
-                flash[:error] = "could not find child #{:taxon.id}"
+                flash[:error] = "could not find child #{:node.id}"
             end
         else
-            flash[:error] = "could not find taxon, corresponding to #{:id}"
+            flash[:error] = "could not find node, corresponding to #{:id}"
         end
         # ?? no need to redirect, right? - fall back to page (i.e. edit)
 
@@ -144,30 +144,30 @@ class TaxonomiteController < ApplicationController
 
     # this should not happen if raise_not_found_error = false in mongoid.yml
     rescue ::Mongoid::Errors::DocumentNotFound => err
-            flash[:error] = "No such Taxon in database."
+            flash[:error] = "No such node in database."
             render 'edit'
     end
 
     def remchild
-        @taxon = Taxon.find(params[:id])
-        if @taxon
-            child = Taxon.find(params[:taxon])
+        @node = Node.find(params[:id])
+        if @node
+            child = Node.find(params[:node])
             if child
                 if do_remchild(child)
-                # !! deprecated if @taxon.remove_child(child)
-                    if @taxon.save()
-                        flash[:message] = "#{child.name} removed from #{@taxon.name}"
+                # !! deprecated if @node.remove_child(child)
+                    if @node.save()
+                        flash[:message] = "#{child.name} removed from #{@node.name}"
                     else
-                        flash[:error] = "unable to save #{@taxon.name}, after attempted removal of child #{child.name}"
+                        flash[:error] = "unable to save #{@node.name}, after attempted removal of child #{child.name}"
                     end
                 else
-                    flash[:error] = "unable to remove #{child.name} from #{@taxon.name}"
+                    flash[:error] = "unable to remove #{child.name} from #{@node.name}"
                 end
             else
-                flash[:error] = "could not find child #{:taxon.id} in #{@taxon.name}"
+                flash[:error] = "could not find child #{:node.id} in #{@node.name}"
             end
         else
-            flash[:error] = "could not find taxon, corresponding to #{:id}"
+            flash[:error] = "could not find node, corresponding to #{:id}"
         end
         # ?? no need to redirect, right? - fall back to page (i.e. edit)
 
@@ -175,52 +175,52 @@ class TaxonomiteController < ApplicationController
 
         # this should not happen if raise_not_found_error = false in mongoid.yml
     rescue ::Mongoid::Errors::DocumentNotFound => err
-            flash[:error] = "No such Taxon in database."
+            flash[:error] = "No such node in database."
             render 'edit'
     end
 
     def breakparent
-        @taxon = Taxon.find(params[:id])
-        if @taxon
+        @node = Node.find(params[:id])
+        if @node
             # this could be made more complex so as to avoid specifying whether there is or
             # is not a single parent (not enforcing tree structure in the controller)
             do_remparent
         else
-            flash[:error] = "could not find taxon, corresponding to #{:id}"
+            flash[:error] = "could not find node, corresponding to #{:id}"
         end
 
         render 'edit'
 
     rescue ::Mongoid::Errors::DocumentNotFound => err
-        flash[:error] = "No such Taxon in database."
+        flash[:error] = "No such node in database."
         render 'edit'
     end
 
     private
         # actual method is hidden to keep hidden
         def do_addchild(ch)
-             @taxon.children << ch
+             @node.children << ch
         end
 
         def do_remchild(ch)
-             @taxon.children.delete(ch)
+             @node.children.delete(ch)
         end
 
         def do_remparent
-            @taxon.parent.delete(@taxon)
+            @node.parent.delete(@node)
         end
 
-        def taxon_params
-            params.require(:taxonomite_taxon).permit(:name, :description)
+        def node_params
+            params.require(:taxonomite_node).permit(:name, :description)
         end
 
         def add_params
-            params.require(:taxon)
+            params.require(:node)
             params.permit(:addid)
         end
 
         def rem_params
-            params.require(:taxon)
+            params.require(:node)
             params.permit(:remid)
         end
 end

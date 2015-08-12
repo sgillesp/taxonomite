@@ -2,7 +2,7 @@ require 'taxonomite/taxonomite_configuration'
 require 'taxonomite/tree'
 
 module Taxonomite
-  class Taxon
+  class Node
     # Class declarations
     #
     # configuration
@@ -31,7 +31,7 @@ module Taxonomite
       "_id"
     end
 
-    case Taxon.config.use_tree_model
+    case Node.config.use_tree_model
     when :self
       include ::Mongoid::Document
       include Taxonomite::Tree
@@ -39,10 +39,10 @@ module Taxonomite
       # configure the way the tree behaves
       before_destroy :nullify_children
     else
-      raise RuntimeError, 'Invalid option for Taxon.config.use_tree_model: #{Taxon.config.use_tree_model}'
+      raise RuntimeError, 'Invalid option for Node.config.use_tree_model: #{Node.config.use_tree_model}'
     end
 
-    field :name, type: String         # name of this particular object (not really taxon)
+    field :name, type: String         # name of this particular object (not really node)
     field :description, type: String  # description of this item
     field :entity_type, type: String, default: ->{ self.get_entity_type }  # type of entity (i.e. state, county, city, etc.)
 
@@ -143,7 +143,7 @@ module Taxonomite
 
         # set the entity type (each subclass should override)
         def get_entity_type
-          'Taxon'
+          'Node'
         end
 
         def validate_child(ch)
@@ -154,5 +154,5 @@ module Taxonomite
           raise InvalidParent, "Cannot add #{pa.name} (#{pa.enity_type}) as parent of #{self.name} (#{self.entity_type})" if !is_valid_parent?(pa)
         end
 
-  end   # class Taxon
+  end   # class Node
 end # module Taxonomite

@@ -7,7 +7,7 @@ module Taxonomite
     extend ActiveSupport::Concern
 
     included do
-      has_one :taxonomy_node, class_name: 'Taxonomite::Taxon', as: :owner, validate: true
+      has_one :taxonomy_node, class_name: 'Taxonomite::Node', as: :owner, validate: true
       before_save :do_setup
 
       class_eval "def base_class; ::#{self.name}; end"
@@ -30,7 +30,7 @@ module Taxonomite
       # subclasses should overload create_taxonomy_node to create the appropriate Place object and set it up
       def do_setup
         if (self.taxonomy_node == nil)
-          self.taxonomy_node = self.respond_to?(:create_taxonomy_node) ? self.create_taxonomy_node : Taxonomite::Taxon.new(name: self.name)
+          self.taxonomy_node = self.respond_to?(:create_taxonomy_node) ? self.create_taxonomy_node : Taxonomite::Node.new(name: self.name)
           self.taxonomy_node.owner = self
         end
       end

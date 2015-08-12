@@ -1,16 +1,14 @@
 require 'rails_helper'
 require 'spec_helper'
-require 'taxonomite/taxon'
+require 'taxonomite/node'
 
 module Taxonomite
 
   RSpec.describe TaxonomiteController, type: :controller do
 
-    #routes { Taxonomite::Engine.routes }
-
     before :all do
       # populate the database prior to trying index/get
-      @sample = FactoryGirl.create(:taxonomite_taxon)
+      @sample = FactoryGirl.create(:taxonomite_node)
     end
 
     describe "GET #index" do

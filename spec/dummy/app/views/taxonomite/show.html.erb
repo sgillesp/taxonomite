@@ -1,20 +1,20 @@
-<h2> Info on a taxon</h2>
-<% if @taxon %>
+<h2> Info on a node</h2>
+<% if @node %>
     <ul>
 
-        <p>Name:        <%= link_to @taxon.typeifiedname, taxonomite_path(@taxon) %></p>
-        <p>Type:        <%= @taxon.entity_type %></p>
-        <p>Description: <%= @taxon.description %></p>
-        <p>Population:  <%= @taxon.aggregate_leaves("countme") %>
+        <p>Name:        <%= link_to @node.typeifiedname, taxonomite_path(@node) %></p>
+        <p>Type:        <%= @node.entity_type %></p>
+        <p>Description: <%= @node.description %></p>
+        <p>Population:  <%= @node.aggregate_leaves("countme") %>
 
-        <% if @taxon.parent %>
+        <% if @node.parent %>
         <h3>Parent:</h3>
-            <li><%= link_to @taxon.parent.name, taxonomite_path(@taxon.parent) %></li>
+            <li><%= link_to @node.parent.name, taxonomite_path(@node.parent) %></li>
         <% end %>
 
-        <% if @taxon.has_children? %>
+        <% if @node.has_children? %>
             <h3>Children:</h3>
-            <%= render partial: 'taxon', collection: @taxon.children, as: :node %>
+            <%= render partial: 'node', collection: @node.children, as: :node %>
         <% end %>
 
     </ul>
@@ -24,5 +24,5 @@
 
 <br/>
   <ul>
-  <li><%= link_to "Edit this taxon", edit_taxonomite_path(@taxon) %></li>
+  <li><%= link_to "Edit this node", edit_taxonomite_path(@node) %></li>
   </ul>
