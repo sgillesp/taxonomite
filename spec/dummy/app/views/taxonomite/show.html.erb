@@ -5,11 +5,11 @@
         <p>Name:        <%= link_to @taxon.typeifiedname, taxonomite_path(@taxon) %></p>
         <p>Type:        <%= @taxon.entity_type %></p>
         <p>Description: <%= @taxon.description %></p>
-        <p>Population:  <%= @taxon.aggregate_leaves("isperson?") %>
+        <p>Population:  <%= @taxon.aggregate_leaves("countme") %>
 
         <% if @taxon.parent %>
         <h3>Parent:</h3>
-            <li><%= link_to @taxon.parent.name, taxon_path(@taxon.parent) %></li>
+            <li><%= link_to @taxon.parent.name, taxonomite_path(@taxon.parent) %></li>
         <% end %>
 
         <% if @taxon.has_children? %>

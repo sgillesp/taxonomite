@@ -13,6 +13,10 @@ require "mongoid"
 
 Bundler.require(*Rails.groups)
 require "taxonomite"
+require "../models/taxonomite/zoology"
+
+# I hate this as its a specified path; get all the factories
+Dir["#{File.dirname(__FILE__)}/../../factories/*.rb"].each { |f| require f }
 
 module Dummy
   class Application < Rails::Application
