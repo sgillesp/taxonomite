@@ -1,12 +1,12 @@
 PATH
   remote: .
   specs:
-    taxonomite (0.0.1)
-      bson_ext
-      mongodb
-      mongoid
-      moped
-      rails
+    taxonomite (0.1.0)
+      bson_ext (~> 1.5.0, >= 1.0)
+      mongodb (~> 0.0.13, >= 0)
+      mongoid (~> 4.0.2, >= 4.0)
+      moped (~> 2.0.6, >= 2.0)
+      rails (~> 4.2, >= 4.2)
 
 GEM
   remote: https://rubygems.org/
