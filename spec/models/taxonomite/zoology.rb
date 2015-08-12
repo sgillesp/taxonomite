@@ -1,4 +1,6 @@
 
+require 'taxonomite/entity'
+
 module Taxonomite
   class Kingdom < Taxonomite::Taxon
 
@@ -87,6 +89,31 @@ module Taxonomite
     def valid_parent_types
       'Genus'
     end
+  end
+
+  class BeingRep
+    include Mongoid::Document
+    include Taxonomite::Entity
+
+    field :name, type: String         # name of this particular object
+
+    protected
+    # overload this to create a specific taxonomy node (i.e. species)
+    def create_taxonomy_node
+      Taxonomite::Species.new(name: self.name)
+    end
+  end
+
+  class GenusRep
+    include Mongoid::Document
+    include Taxonomite::Entity
+
+    field :name, type: String   # name of this genus representation
+
+    protected
+      def create_taxonomy_node
+        Taxonomite::Genus.new(name: self.name)
+      end
   end
 
 end # module Taxonomite
