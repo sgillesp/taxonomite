@@ -23,7 +23,7 @@ module Taxonomite
     protected
       # classes overload to create the appropriate taxonomy_node
       # def create_taxonomy_node
-      #   Taxonomite::Taxon.new(name: self.name)
+      #   Taxonomite::Node.new(name: self.name)
       # end
 
     private
