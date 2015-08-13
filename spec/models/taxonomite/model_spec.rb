@@ -20,11 +20,6 @@ module Taxonomite
                 expect(node.name).to eq("new_name")
             end
 
-            it 'sets the description' do
-                node.description = "new_description"
-                expect(node.description).to eq("new_description")
-            end
-
             it 'allow access to children' do
                 expect { node.children }.not_to raise_error
             end
