@@ -5,8 +5,8 @@ PATH
       bson_ext (~> 1.5.0, >= 1.0)
       mongodb (~> 0.0.13, >= 0)
       mongoid (~> 4.0.2, >= 4.0)
-      moped (~> 2.0.6, >= 2.0)
-      rails (~> 4.2, >= 4.2)
+      moped (~> 2.0, >= 2.0)
+      rails (~> 4.0, >= 4.0)
 
 GEM
   remote: https://rubygems.org/
@@ -141,7 +141,7 @@ GEM
       rspec-mocks (~> 3.3.0)
       rspec-support (~> 3.3.0)
     rspec-support (3.3.0)
-    sprockets (3.2.0)
+    sprockets (3.3.0)
       rack (~> 1.0)
     sprockets-rails (2.3.2)
       actionpack (>= 3.0)
