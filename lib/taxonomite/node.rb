@@ -68,50 +68,14 @@ module Taxonomite
         end
     end
 
-    # check for validity, with adding error checking this would be the appropriate
-    # place to add exceptions, etc. (to allow recovery);
-    # !! could move this to the tree structure
-    def is_valid_child?(ch)
-        # !! need to figure out how to do this with regexp
-        unless self.invalid_child_types.include?(ch.entity_type)
-          s = self.valid_child_types
-          if s.include?('*') || s.include?(ch.entity_type)
-            return ch.is_valid_parent?(self)
-          else
-            return false
-          end
-        else
-          return false
-        end
-    end
-
-    # default parent types (subclasses should override as needed) - default specifies any
-    def valid_parent_types
-      '*'
-    end
-
-    # default child types (subclasses should override as needed) - default specifies any
-    def valid_child_types
-      '*'
-    end
-
-    # default invalid child types
-    def invalid_child_types
-      ""
-    end
-
-    # default invalid parent types
-    def invalid_parent_types
-      ""
-    end
-
     ##
     # Is this the direct owner of the node passed. This allows for auto-organizing
     # hierarchies. Sublcasses should override this method. Defaults to false - hence
     # no structure.
     # @param [Taxonomite::Node] node node in question
+    # @param [Taxonomite::Taxonomy] taxonomy to use to determine the containment
     # @return [Boolean] whether self should directly own node as a child, default is false
-    def contains?(node)
+    def contains?(node, taxonomy = nil)
       false
     end
 
@@ -119,17 +83,14 @@ module Taxonomite
     # Find the direct owner of a node within the tree. Returns nil if no direct
     # owner exists within the tree starting at root self.
     # @param [Taxonomite::Node] node the node to evaluate
+    # @param [Taxonomite::Taxonomy] taxonomy to use to determine the containment
     # @return [Taxonomite::Node] the appropriate node or nil if none found
-    def find_owner(node)
-      if self.should_own?(node)
-        return true
-      else
-        if children.present?
-          children.each do |c|
-              if (n = c.find_owner(node)) != nil
-                return n
-              end
-          end
+    def find_owner(node, taxonomy = nil)
+      return nil if taxonomy.nil?
+      return self if self.should_own?(node,taxonomy)
+      if children.present?
+        children.each do |c|
+            c.find_owner(node, taxonomy).presence.each { |n| return n if !n.nil? }
         end
       end
       return nil
@@ -139,8 +100,11 @@ module Taxonomite
     # see if this node belongs directly under a particular parent; this allows for
     # assignment within a hierarchy. Subclasses should override to provide better
     # functionality. Default behavior asks the node if it contains(self).
-    def belongs_under(node)
-      node.find_owner(self) != nil
+    # @param [Taxonomite::Node] node the node to evaluate
+    # @param [Taxonomite::Taxonomy] taxonomy to use to determine the containment
+    # @return [Boolean] whether this node should belong under the node
+    def belongs_under(node, taxonomy = nil)
+      node.find_owner(self, taxonomy) != nil
     end
 
     ##
@@ -149,24 +113,13 @@ module Taxonomite
     # self-organizing hierarchy to work is for belongs_under to return true when
     # belongs_directly_to is true as well. Default behaviour is to ask the node if
     # it directly_contains(self).
-    # @param [Taxonomite::Node] node to evaluate
-    def belongs_directly_to(node)
-      node.contains?(self)
+    # @param [Taxonomite::Node] node the node to evaluate
+    # @param [Taxonomite::Taxonomy] taxonomy to use to determine the containment
+    # @return [Boolean] whether this node should belong directly under the node
+    def belongs_directly_to(node, taxonomy = nil)
+      node.contains?(self, taxonomy)
     end
 
-    ##
-    # find the appropriate parent for this node.
-
-    ##
-    # see
-
-    # don't want to index off of place name? - could have multiple entries w. similar names
-    # create an index off of the place name, alone; will later create on off of the
-    # geo locations *additionally*
-    # index({ place_name: 1 }, { unique: false, name: "name_index"})
-
-    # ** would like to hide these interfaces in a private/protected manner, not clear
-    # ** how to do this in Ruby - doesn't have 'const' access similar to c++, etc.
     protected
 
         # include type in the name of this place (i.e. 'Washington state')
@@ -179,12 +132,16 @@ module Taxonomite
           'Node'
         end
 
-        def validate_child(ch)
-          raise InvalidChild, "Cannot add #{ch.name} (#{ch.entity_type}) as child of #{self.name} (#{self.entity_type})" if !is_valid_child?(ch)
+        def validate_child(ch, taxonomy = nil)
+          if taxonomy.nil?
+            raise InvalidChild, "Cannot add #{ch.name} (#{ch.entity_type}) as child of #{self.name} (#{self.entity_type})" unless is_valid_child?(ch, taxonomy)
+          else
+            taxonomy.validate_relation(:parent => self, :child => ch)
+          end
         end
 
-        def validate_parent(pa)
-          raise InvalidParent, "Cannot add #{pa.name} (#{pa.enity_type}) as parent of #{self.name} (#{self.entity_type})" if !is_valid_parent?(pa)
+        def validate_parent(pa, taxonomy = nil)
+          pa.validate_child(self, taxonomy) if !pa.nil?
         end
 
   end   # class Node
