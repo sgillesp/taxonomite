@@ -1,56 +1,34 @@
 require 'taxonomite/taxonomite_configuration'
 require 'taxonomite/tree'
+require 'mongoid'
 
 module Taxonomite
   class Node
-    # Class declarations
-    #
-    # configuration
-    #
-    # !! note that configuration is class-wide, rather than on an
-    #    instance-instance value; this could be changed, for example if
-    #    two simultaneous persistence models for the place were desired
-    #
-    class << self
-        attr_writer :configiration
-    end
+    extend Taxonomite::ConfiguredGlobally
 
-    def self.config
-        @configuration ||= Taxonomite::Configuration.new
-    end
-
-    def self.configure
-        yield(config)
-    end
-
-    def self.reset
-        @configuration = Taxonomite::Configuration.new
-    end
-
-    def self.primary_key
-      "_id"
-    end
-
+    # handle configurable options - this is essentially how the tree is stored.
     case Node.config.use_tree_model
-    when :self
-      include ::Mongoid::Document
-      include Taxonomite::Tree
+      when :self
+        include ::Mongoid::Document
+        include Taxonomite::Tree
 
-      # configure the way the tree behaves
-      before_destroy :nullify_children
-    else
-      raise RuntimeError, 'Invalid option for Node.config.use_tree_model: #{Node.config.use_tree_model}'
+        # configure the way the tree behaves
+        before_destroy :nullify_children
+      else
+        raise RuntimeError, 'Invalid option for Node.config.use_tree_model: #{Node.config.use_tree_model}'
     end
 
     field :name, type: String         # name of this particular object (not really node)
-    field :description, type: String  # description of this item
     field :entity_type, type: String, default: ->{ self.get_entity_type }  # type of entity (i.e. state, county, city, etc.)
 
     belongs_to :owner, polymorphic: true # this is the associated object
 
-    ## Data collection methods
+    # Data collection methods
 
-    # aggregates the results of calling method m on all leaves of the tree and returns that
+    ##
+    # aggregates the results of calling method m on all leaves of the tree
+    # @param [Method] m method to call on owner and pass to children
+    # @return [] aggregated values from m on all children
     def aggregate_leaves(m)
       if self.leaf?
         return self.owner.instance_eval(m) if self.owner != nil && self.owner.respond_to?(m)
@@ -126,6 +104,61 @@ module Taxonomite
     def invalid_parent_types
       ""
     end
+
+    ##
+    # Is this the direct owner of the node passed. This allows for auto-organizing
+    # hierarchies. Sublcasses should override this method. Defaults to false - hence
+    # no structure.
+    # @param [Taxonomite::Node] node node in question
+    # @return [Boolean] whether self should directly own node as a child, default is false
+    def contains?(node)
+      false
+    end
+
+    ##
+    # Find the direct owner of a node within the tree. Returns nil if no direct
+    # owner exists within the tree starting at root self.
+    # @param [Taxonomite::Node] node the node to evaluate
+    # @return [Taxonomite::Node] the appropriate node or nil if none found
+    def find_owner(node)
+      if self.should_own?(node)
+        return true
+      else
+        if children.present?
+          children.each do |c|
+              if (n = c.find_owner(node)) != nil
+                return n
+              end
+          end
+        end
+      end
+      return nil
+    end
+
+    ##
+    # see if this node belongs directly under a particular parent; this allows for
+    # assignment within a hierarchy. Subclasses should override to provide better
+    # functionality. Default behavior asks the node if it contains(self).
+    def belongs_under(node)
+      node.find_owner(self) != nil
+    end
+
+    ##
+    # see if this node belongs directly to another node (i.e. would appropriately)
+    # be added as a child of the node. Default returns false. Convention to get
+    # self-organizing hierarchy to work is for belongs_under to return true when
+    # belongs_directly_to is true as well. Default behaviour is to ask the node if
+    # it directly_contains(self).
+    # @param [Taxonomite::Node] node to evaluate
+    def belongs_directly_to(node)
+      node.contains?(self)
+    end
+
+    ##
+    # find the appropriate parent for this node.
+
+    ##
+    # see
 
     # don't want to index off of place name? - could have multiple entries w. similar names
     # create an index off of the place name, alone; will later create on off of the
