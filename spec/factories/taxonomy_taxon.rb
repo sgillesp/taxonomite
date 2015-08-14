@@ -34,4 +34,7 @@ FactoryGirl.define do
     name { "#{Faker::Lorem.word.capitalize} #{Faker::Lorem.word}" }
   end
 
+  factory :taxonomite_taxonomy, :class => 'Taxonomite::BiologyTaxonomy' do
+  end
+
 end

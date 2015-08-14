@@ -5,9 +5,11 @@ module Taxonomite
   ##
   # Class which enforces a particular hierarchy among objects.
   class Taxonomy
+    include Mongoid::Document
+
     # ? whether this needs to be stored in the database or not, as most
     # of the time would be instanciated by an application
-    field :taxonomy, type: Hash   # the underlying hash
+    field :taxonomy, type: Hash, default: -> { self.initial_hash }  # the underlying hash
 
     ##
     # determine whether the parent is a valid parent for the child. If no
@@ -17,7 +19,10 @@ module Taxonomite
     # @param [Taxonomite::Node] child the proposed child node
     # @return [Boolean] whether the child appropriate for the parent, default true
     def is_valid_relation?(parent, child)
-      self.taxonomy.present? ? self.taxonomy[parent.entity_type].find(child.entity_type) : true
+      Array(self.taxonomy[parent.entity_type]).each do |t|
+        return true if t == child.entity_type
+      end
+      false
     end
 
     ##
@@ -40,15 +45,15 @@ module Taxonomite
       self.taxonomy[str]
     end
 
-    ##
-    # Is this the direct owner of the node passed. This allows for auto-organizing
-    # hierarchies. Sublcasses should override this method. Defaults to false - hence
-    # no structure.
-    # @param [Taxonomite::Node] node node in question
-    # @return [Boolean] whether self should directly own node as a child, default is false
-    def contains?(node)
-      false
-    end
+    # ##
+    # # Is this the direct owner of the node passed. This allows for auto-organizing
+    # # hierarchies. Sublcasses should override this method. Defaults to false - hence
+    # # no structure.
+    # # @param [Taxonomite::Node] node node in question
+    # # @return [Boolean] whether self should directly own node as a child, default is false
+    # def contains?(node)
+    #   false
+    # end
 
     ##
     # Find the direct owner of a node within the tree. Returns nil if no direct
@@ -60,23 +65,10 @@ module Taxonomite
     # @param [Taxonomite::Node] root the root of the tree to evaluate; if nil will search for the parents of the node first
     # @return [Taxonomite::Node] the appropriate node or nil if none found
     def find_owner(node, root = nil)
-      if root != nil
-        # try to find the appropriate parent node moving down the tree
-        return root if self.is_valid_relation?(root, node)
-        for root.children.each do |c| unless !root.children.present?
-          do find_owner_down(node) { |o| return o if o != nil }
-        end
-      else
-        # try to find the nodes with parent types that are valid for this object
-        if p = valid_parent_types(node)
-          p.each do |t|
-            # check if an asterisk (in which case )
-            t == '*' ? Taxonomite::Node.find().each : Taxonomite::Node.find_by(:entity_type => t).each do |n|
-              return n if is_valid_relation(n,node)
-            end
-          end
-        end
-
+      valid_parent_types(node).presence.each do |t|
+        getallnodes = lambda { |v| v == '*' ? Taxonomite::Node.find() : Taxonomite::Node.find_by(:entity_type => t) }
+        getrootnodes = lambda { |v| v == '*' ? root.self_and_descendants : root.self_and_descendants.find_by(:entity_type => t) }
+        ( root.nil? ? getallnodes.call(t) : getrootnodes.call(t) ).each { |n| return n if is_valid_relation(n,node) }
       end
       nil
     end
@@ -89,31 +81,40 @@ module Taxonomite
       node.find_owner(self) != nil
     end
 
-    ##
-    # see if this node belongs directly to another node (i.e. would appropriately)
-    # be added as a child of the node. Default returns false. Convention to get
-    # self-organizing hierarchy to work is for belongs_under to return true when
-    # belongs_directly_to is true as well. Default behaviour is to ask the node if
-    # it directly_contains(self).
-    # @param [Taxonomite::Node] node to evaluate
-    # @return [Boolean] whether node contains this object (self)
-    def belongs_directly_to(node)
-      node.contains?(self)
-    end
+    # ##
+    # # see if this node belongs directly to another node (i.e. would appropriately)
+    # # be added as a child of the node. Default returns false. Convention to get
+    # # self-organizing hierarchy to work is for belongs_under to return true when
+    # # belongs_directly_to is true as well. Default behaviour is to ask the node if
+    # # it directly_contains(self).
+    # # @param [Taxonomite::Node] node to evaluate
+    # # @return [Boolean] whether node contains this object (self)
+    # def belongs_directly_to(node)
+    #   node.contains?(self)
+    # end
 
     ##
     # try to add a child to a parent, with validation by this Taxonomy
     # @param [Taxonomite::Node] parent the parent node
     # @param [Taxonomite::Node] child the child node
     def add(parent, child)
-      validate_relation(parent, child)
-      parent.children << child
+      parent.add_child(child, self)
     end
 
     protected
-        def validate_relation(parent, child)
-          raise InvalidChild, "Cannot add #{child.name} (#{child.entity_type}) as child of #{parent.name} (#{parent.entity_type})" if !is_valid_relation?(parent, child)
-        end
+
+    ##
+    # return the default initial hash for this object, default is empty.
+    # Subclasses should override to provide a default hash. A hierarchy could
+    # be createed with this method alone.
+    # @return [Hash] the default (initialized) taxonomy_hash values
+    def initial_hash
+      {}
+    end
+
+    #     def validate_relation(parent, child)
+    #       raise InvalidChild, "Cannot add #{child.name} (#{child.entity_type}) as child of #{parent.name} (#{parent.entity_type})" if !is_valid_relation?(parent, child)
+    #     end
 
   end   # class Taxonomy
 end # module Taxonomite

@@ -21,11 +21,11 @@ module Taxonomite
             end
 
             it 'allow access to children' do
-                expect { node.children }.not_to raise_error
+                expect { node.children! }.not_to raise_error
             end
 
             it 'allow access to parent' do
-                expect { node.parent }.not_to raise_error
+                expect { node.parent! }.not_to raise_error
             end
 
         end

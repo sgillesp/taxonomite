@@ -1,16 +1,17 @@
 
 require 'taxonomite/entity'
+require 'taxonomite/taxonomy'
 
 module Taxonomite
   class Kingdom < Taxonomite::Node
 
     protected
     def get_entity_type
-        'Kingdom'
+        'kingdom'
     end
 
     def valid_parent_types
-      'Taxonomy'
+      'taxonomy'
     end
 
   end   # class Kingdom
@@ -19,11 +20,11 @@ module Taxonomite
 
     protected
     def get_entity_type
-        return 'Phylum'
+        return 'phylum'
     end
 
     def valid_parent_types
-      'Kingdom'
+      'kingdom'
     end
   end
 
@@ -31,11 +32,11 @@ module Taxonomite
 
     protected
     def get_entity_type
-        return 'Class'
+        return 'class'
     end
 
     def valid_parent_types
-      'Phylum'
+      'phylum'
     end
   end
 
@@ -43,11 +44,11 @@ module Taxonomite
 
     protected
     def get_entity_type
-        return 'Order'
+        return 'order'
     end
 
     def valid_parent_types
-      'Class'
+      'class'
     end
   end
 
@@ -55,11 +56,11 @@ module Taxonomite
 
     protected
     def get_entity_type
-        return 'Family'
+        return 'family'
     end
 
     def valid_parent_types
-      'Order'
+      'order'
     end
   end
 
@@ -67,11 +68,11 @@ module Taxonomite
 
     protected
     def get_entity_type
-        return 'Genus'
+        return 'genus'
     end
 
     def valid_parent_types
-      'Family'
+      'family'
     end
   end
 
@@ -83,7 +84,7 @@ module Taxonomite
 
     protected
     def get_entity_type
-        return 'Species'
+        return 'species'
     end
 
     def valid_parent_types
@@ -114,6 +115,14 @@ module Taxonomite
       def create_taxonomy_node
         Taxonomite::Genus.new(name: self.name)
       end
+  end
+
+  class BiologyTaxonomy < Taxonomite::Taxonomy
+    protected
+    def initial_hash
+      { 'kingdom' => 'phylum', 'phylum' => 'class', 'class' => 'order',
+        'order' => 'family', 'family' => 'genus', 'genus' => 'species' }
+    end
   end
 
 end # module Taxonomite

@@ -89,6 +89,7 @@ module Taxonomite
     end
 
     # move all children to the parent node
+    # !!! need to perform validations here?
     def move_children_to_parent
       children.each do |c|
         self.parent.children << c
@@ -97,13 +98,14 @@ module Taxonomite
     end
 
     # perform validation on whether this child is an acceptable child or not?
-    # the base_class must have a method 'is_valid_child?' to implement domain logic there
+    # the base_class must have a method 'validate_child?' to implement domain logic there
     def validate_child!(ch)
       raise InvalidChild "Attempted to add nil child to #{self}" if (ch == nil)
       raise CircularRelation, "Circular relationship adding #{ch} to #{self}" if self.descendant_of?(ch)
-      if base_class.method_defined? :is_valid_child?
-        self.validate_child(ch)  # this should throw an error if not valid
-      end
+      # this is no longer needed now that validation is pulled out
+      # if base_class.method_defined? :validate_child
+      #   self.validate_child(ch)  # this should throw an error if not valid
+      # end
     end
 
     # to do - find a way to add a Mongoid criteria to return all of the nodes for this object
