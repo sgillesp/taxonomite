@@ -36,25 +36,45 @@ module Taxonomite
 
     belongs_to :owner, polymorphic: true # this is the associated object
 
-    # Data collection methods -- SHOULD GO IN Tree !!
+    ##
+    # evaluate a method on the owner of this node (if present). If an owner is
+    # not present, then the method is evaluated on this object. In either case
+    # a check is made to ensure that the object will respond_to? the method call.
+    # If the owner exists but does not respond to the method, then the method is
+    # tried on this node object in similar fashion.
+    # !!! SHOULD THIS JUST OVERRIDE instance_eval ??
+    # @param [Method] m method to call
+    # @return [] the result of the method call, or nil if unable to evaluate
+    def evaluate(m)
+      return self.owner.instance_eval(m) if self.owner != nil && self.owner.respond_to?(m)
+      return self.instance_eval(m) if self.respond_to?(m)
+      nil
+    end
 
     ##
     # aggregates the results of calling method m on all leaves of the tree
     # @param [Method] m method to call on owner and pass to children
-    # @return [] aggregated values from m on all children
+    # @return [Array] aggregated values from m on all children as an array
     def aggregate_leaves(m)
-      if self.is_leaf?
-        return self.owner.instance_eval(m) if self.owner != nil && self.owner.respond_to?(m)
-        return self.instance_eval(m) if self.respond_to?(m)
-        return 0
-      else
-        res = 0
-        self.children.each do |c|
-          res = res + c.aggregate_leaves(m)
-        end
-        return res
+      r = Array.new
+      self.leaves.each do |l|
+        r << l.evaluate(m)
       end
+      return r
     end
+
+    ##
+    # aggregates the results of calling method m on nodes within the tree
+    # @param [Method] m method to call on owner and pass to children
+    # @return [Array] aggregated values from m on all children as an array
+    def aggregate(m)
+      r = Array.new
+      self.self_and_descendants.each do |l|
+        r << l.evaluate(m)
+      end
+      return r
+    end
+
 
     ##
     # typeify name w entity (i.e. 'Washington state' vs. 'Seattle')
