@@ -52,31 +52,6 @@ module Taxonomite
     end
 
     ##
-    # aggregates the results of calling method m on all leaves of the tree
-    # @param [Method] m method to call on owner and pass to children
-    # @return [Array] aggregated values from m on all children as an array
-    def aggregate_leaves(m)
-      r = Array.new
-      self.leaves.each do |l|
-        r << l.evaluate(m)
-      end
-      return r
-    end
-
-    ##
-    # aggregates the results of calling method m on nodes within the tree
-    # @param [Method] m method to call on owner and pass to children
-    # @return [Array] aggregated values from m on all children as an array
-    def aggregate(m)
-      r = Array.new
-      self.self_and_descendants.each do |l|
-        r << l.evaluate(m)
-      end
-      return r
-    end
-
-
-    ##
     # typeify name w entity (i.e. 'Washington state' vs. 'Seattle')
     # @return [String] the typeified name
     def typeifiedname

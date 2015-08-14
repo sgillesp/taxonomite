@@ -89,22 +89,31 @@ module Taxonomite
           end
 
           it 'can aggregate over all nodes in the tree without causing exception' do
-            expect { @nodes[0].aggregate('name') }.not_to raise_error
+            expect { @nodes[0].self_and_descendants.map { |n| n.evaluate('name') } }.not_to raise_error
           end
 
           it 'accurately aggregates all node values' do
-              a = @nodes[0].aggregate('name')
-              expect(a.find_index(@nodes[3].name)).not_to eq(nil)
-              expect(a.find_index(@nodes[2].name)).not_to eq(nil)
-              expect(a.find_index(@nodes[0].name)).not_to eq(nil)
+              a = @nodes[0].self_and_descendants.map { |n| n.evaluate ('name') }
+              expect(a.include?(@nodes[3].name)).to eq(true)
+              expect(a.include?(@nodes[2].name)).to eq(true)
+              expect(a.include?(@nodes[1].name)).to eq(true)
+              expect(a.include?(@nodes[0].name)).to eq(true)
+          end
+
+          it 'aggregates descendants without self' do
+            a = @nodes[0].descendants.map { |n| n.evaluate ('name') }
+            expect(a.include?(@nodes[3].name)).to eq(true)
+            expect(a.include?(@nodes[2].name)).to eq(true)
+            expect(a.include?(@nodes[1].name)).to eq(true)
+            expect(a.include?(@nodes[0].name)).not_to eq(true)
           end
 
           it 'aggregates leaf values without causing exception' do
-            expect { @nodes[0].aggregate_leaves('name') }.not_to raise_error
+            expect { @nodes[0].leaves.map { |n| n.evaluate('name') } }.not_to raise_error
           end
 
           it 'accurately aggregates leaf values' do
-              a = @nodes[0].aggregate_leaves('name')
+              a = @nodes[0].leaves.map { |n| n.evaluate('name') }
 
               # i = 0
               # @nodes.each do |n|
@@ -116,9 +125,10 @@ module Taxonomite
               # print "leaves: ["; @nodes[0].leaves.each { |l| print " #{l.name}" }; puts " ]"
               # puts "aggregated leaves: #{a}"
 
-              expect(a.find_index(@nodes[3].name)).not_to eq(nil)
-              expect(a.find_index(@nodes[2].name)).not_to eq(nil)
-              expect(a.find_index(@nodes[0].name)).to eq(nil)
+              expect(a.include?(@nodes[3].name)).to eq(true)
+              expect(a.include?(@nodes[2].name)).to eq(true)
+              expect(a.include?(@nodes[1].name)).not_to eq(true)
+              expect(a.include?(@nodes[0].name)).not_to eq(true)
           end
 
       end
