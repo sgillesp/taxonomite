@@ -36,7 +36,7 @@ module Taxonomite
     # @param [Method] m method to call on owner and pass to children
     # @return [] aggregated values from m on all children
     def aggregate_leaves(m)
-      if self.leaf?
+      if self.is_leaf?
         return self.owner.instance_eval(m) if self.owner != nil && self.owner.respond_to?(m)
         return self.instance_eval(m) if self.respond_to?(m)
         return 0

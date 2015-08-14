@@ -32,23 +32,23 @@ module Taxonomite
     end
 
     # is this a root node?
-    def root?
+    def is_root?
       self.parent == nil
     end
 
     # is this a leaf?
-    def leaf?
+    def is_leaf?
       self.children.empty?
     end
 
     # find the root of this node
     def root
-      self.root? ? self : self.parent.root
+      self.is_root? ? self : self.parent.root
     end
 
     # is the object an ancestor of nd?
     def is_ancestor?(nd)
-      self.root? ? false : (self.parent == nd || self.parent.is_ancestor?(nd))
+      self.is_root? ? false : (self.parent == nd || self.parent.is_ancestor?(nd))
     end
 
     # is this an ancestor of another node?
