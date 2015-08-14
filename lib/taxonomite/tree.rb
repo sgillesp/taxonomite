@@ -102,10 +102,9 @@ module Taxonomite
     def validate_child!(ch)
       raise InvalidChild "Attempted to add nil child to #{self}" if (ch == nil)
       raise CircularRelation, "Circular relationship adding #{ch} to #{self}" if self.descendant_of?(ch)
-      # this is no longer needed now that validation is pulled out
-      # if base_class.method_defined? :validate_child
-      #   self.validate_child(ch)  # this should throw an error if not valid
-      # end
+      if base_class.method_defined? :validate_child
+         self.validate_child(ch)  # this should throw an error if not valid
+      end
     end
 
     # to do - find a way to add a Mongoid criteria to return all of the nodes for this object

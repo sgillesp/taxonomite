@@ -77,8 +77,10 @@ module Taxonomite
     # see if this node belongs directly under a particular parent; this allows for
     # assignment within a hierarchy. Subclasses should override to provide better
     # functionality. Default behavior asks the node if it contains(self).
-    def belongs_under(node)
-      node.find_owner(self) != nil
+    # @param [Taxonomite::Node] child the node to evaluate
+    # @param [Taxonomite::Parent] parent the parent node to evaluate for the child
+    def belongs_under?(parent, child)
+      self.find_owner(child, parent) != nil
     end
 
     # ##
@@ -98,7 +100,8 @@ module Taxonomite
     # @param [Taxonomite::Node] parent the parent node
     # @param [Taxonomite::Node] child the child node
     def add(parent, child)
-      parent.add_child(child, self)
+      raise InvalidChild, "Cannot add #{child.name} (#{child.entity_type}) as child of #{parent.name} (#{parent.entity_type})" unless self.is_valid_relation?(parent, child)
+      parent.add_child(child)
     end
 
     protected

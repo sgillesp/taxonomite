@@ -37,19 +37,19 @@ module Taxonomite
               end
 
               it 'to allow species in genus with taxonomy present' do
-                  expect { @genus.add_child(@species, @taxonomy) }.not_to raise_error
+                  expect { @taxonomy.add(@genus, @species) }.not_to raise_error
               end
 
               it 'to allow genus in family with taxonomy present' do
-                  expect { @family.add_child(@genus, @taxonomy) }.not_to raise_error
+                  expect { @taxonomy.add(@family, @genus) }.not_to raise_error
               end
 
               it 'not to allow genus in species with taxonomy present' do
-                  expect { @species.add_child(@genus, @taxonomy) }.to raise_error
+                  expect { @taxonomy.add(@species, @genus) }.to raise_error
               end
 
               it 'not to allow species in family with taxonomy present' do
-                  expect { @family.add_child(@species, @taxonomy) }.to raise_error
+                  expect { @taxonomy.add(@family, @species) }.to raise_error
               end
             end
       end
