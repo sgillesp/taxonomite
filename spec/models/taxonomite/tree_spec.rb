@@ -83,25 +83,51 @@ module Taxonomite
               expect(@nodes[3].root).to eq(@nodes[0])
           end
 
-          it 'can get self and descendant nodes without causing exception' do
-            expect { @nodes[0].self_and_descendants }.not_to raise_error
-            expect(@nodes[0].self_and_descendants.size).to eq(@nodes.size)
+          it 'successfully identifies anscestor' do
+              expect(@nodes[2].descendant_of?(@nodes[0])).to eq(true)
+              expect(@nodes[0].descendant_of?(@nodes[2])).to eq(false)
           end
 
-          it 'can aggregate over all nodes in the tree without causing exception' do
-            expect { @nodes[0].self_and_descendants.map { |n| n.evaluate('name') } }.not_to raise_error
+          it 'successfully identifies descendant' do
+              expect(@nodes[2].ancestor_of?(@nodes[0])).to eq(false)
+              expect(@nodes[0].ancestor_of?(@nodes[2])).to eq(true)
           end
 
-          it 'accurately aggregates all node values' do
+          it 'accurately aggregates self and descendants' do
               a = @nodes[0].self_and_descendants.map { |n| n.evaluate ('name') }
+              expect(a.size).to eq(4)
               expect(a.include?(@nodes[3].name)).to eq(true)
               expect(a.include?(@nodes[2].name)).to eq(true)
               expect(a.include?(@nodes[1].name)).to eq(true)
               expect(a.include?(@nodes[0].name)).to eq(true)
           end
 
-          it 'aggregates descendants without self' do
+          it 'accurately aggregates descendants without self' do
             a = @nodes[0].descendants.map { |n| n.evaluate ('name') }
+            expect(a.size).to eq(3)
+            expect(a.include?(@nodes[3].name)).to eq(true)
+            expect(a.include?(@nodes[2].name)).to eq(true)
+            expect(a.include?(@nodes[1].name)).to eq(true)
+            expect(a.include?(@nodes[0].name)).not_to eq(true)
+          end
+
+
+          it 'can aggregate self and descendants' do
+            expect { @nodes[0].self_and_descendants.map { |n| n.evaluate('name') } }.not_to raise_error
+          end
+
+          it 'accurately aggregates self and descendants' do
+              a = @nodes[0].self_and_descendants.map { |n| n.evaluate ('name') }
+              expect(a.size).to eq(4)
+              expect(a.include?(@nodes[3].name)).to eq(true)
+              expect(a.include?(@nodes[2].name)).to eq(true)
+              expect(a.include?(@nodes[1].name)).to eq(true)
+              expect(a.include?(@nodes[0].name)).to eq(true)
+          end
+
+          it 'accurately aggregates descendants without self' do
+            a = @nodes[0].descendants.map { |n| n.evaluate ('name') }
+            expect(a.size).to eq(3)
             expect(a.include?(@nodes[3].name)).to eq(true)
             expect(a.include?(@nodes[2].name)).to eq(true)
             expect(a.include?(@nodes[1].name)).to eq(true)
