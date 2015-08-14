@@ -23,6 +23,20 @@ module Taxonomite
                nodes[0].add_child(nodes[1])
                expect { nodes[1].add_child(nodes[0]) }.to raise_error
           end
+
+          it 'remove parent works as expected, parents child becomes nil' do
+               nodes[0].add_child(nodes[1])
+               expect { nodes[1].rem_parent }.not_to raise_error
+               expect(nodes[0].children!.size).to eq(0)
+          end
+
+          it 'remove child works as expected, child parent becomes nil' do
+               nodes[0].add_child(nodes[1])
+               expect { nodes[0].rem_child(nodes[1]) }.not_to raise_error
+               expect(nodes[0].children!.size).to eq(0)
+               expect(nodes[1].parent!).nil?
+          end
+
       end
 
       context 'tree structure' do

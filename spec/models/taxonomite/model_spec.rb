@@ -20,11 +20,11 @@ module Taxonomite
                 expect(node.name).to eq("new_name")
             end
 
-            it 'allow access to children' do
+            it 'allow bang access to children' do
                 expect { node.children! }.not_to raise_error
             end
 
-            it 'allow access to parent' do
+            it 'allow bang access to parent' do
                 expect { node.parent! }.not_to raise_error
             end
 

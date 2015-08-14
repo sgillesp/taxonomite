@@ -151,6 +151,20 @@ module Taxonomite
     end
 
     ##
+    # remove a child from this node.
+    # @param [Taxonomite::Node] child node to remove
+    def rem_child(child)
+      self.children.delete(child)
+    end
+
+    ##
+    # remove the parent from this node. This should cause a reciprocal removal
+    # of self from the parent's children
+    def rem_parent
+      self.parent.rem_child(self) unless self.parent.nil?
+    end
+
+    ##
     # provides access to the children of the node. Node that adding and removing
     # children outside the context of the add_child and add_parent methods is
     # discouraged as this will break the hierarchy.

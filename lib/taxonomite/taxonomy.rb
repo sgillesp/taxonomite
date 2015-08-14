@@ -112,9 +112,5 @@ module Taxonomite
       {}
     end
 
-    #     def validate_relation(parent, child)
-    #       raise InvalidChild, "Cannot add #{child.name} (#{child.entity_type}) as child of #{parent.name} (#{parent.entity_type})" if !is_valid_relation?(parent, child)
-    #     end
-
   end   # class Taxonomy
 end # module Taxonomite
