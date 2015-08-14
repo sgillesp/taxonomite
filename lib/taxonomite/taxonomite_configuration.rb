@@ -42,14 +42,12 @@ module Taxonomite
       # future versions may extend to using different tree models
       # - for now uses a custom tree model (:self)
       attr_accessor   :use_tree_model
-      attr_accessor   :require_taxonomy
 
     protected
         ##
         # initialize object variables to defaults
         def initialize
             @use_tree_model = :self
-            @require_taxonomy = false
         end
     end
 

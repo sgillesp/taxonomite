@@ -33,7 +33,6 @@ module Taxonomite
 
     field :name, type: String         # name of this particular object (not really node)
     field :entity_type, type: String, default: ->{ self.get_entity_type }  # type of entity (i.e. state, county, city, etc.)
-    field :require_taxonomy, type: Boolean, default: ->{ Node.config.require_taxonomy }
 
     belongs_to :owner, polymorphic: true # this is the associated object
 
@@ -91,7 +90,6 @@ module Taxonomite
     # this will validate the child using thetaxonomy object passed in to the field.
     # @param [Taxonomite::Node] child the node to evaluate
     def add_child(child)
-      validate_child(child)
       self.children << child
     end
 
@@ -108,33 +106,15 @@ module Taxonomite
     ##
     # remove a child from this node.
     # @param [Taxonomite::Node] child node to remove
-    def rem_child(child)
+    def remove_child(child)
       self.children.delete(child)
     end
 
     ##
     # remove the parent from this node. This should cause a reciprocal removal
     # of self from the parent's children
-    def rem_parent
-      self.parent.rem_child(self) unless self.parent.nil?
-    end
-
-    ##
-    # provides access to the children of the node. Node that adding and removing
-    # children outside the context of the add_child and add_parent methods is
-    # discouraged as this will break the hierarchy.
-    # @return [Array] the array of children methods
-    def children!
-      self.children
-    end
-
-    ##
-    # provides access to the parent of the node. Node that adding and removing
-    # children outside the context of the add_child and add_parent methods is
-    # discouraged as this will break the hierarchy.
-    # @return [Taxonomy::Node] the parent for this node
-    def parent!
-      self.parent
+    def remove_parent
+      self.parent.remove_child(self) unless self.parent.nil?
     end
 
     protected

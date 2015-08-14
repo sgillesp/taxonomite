@@ -8,12 +8,12 @@
 
         <% if !@node.is_root? %>
         <h3>Parent:</h3>
-            <li><%= link_to @node.parent!.name, taxonomite_path(@node.parent!) %></li>
+            <li><%= link_to @node.parent.name, taxonomite_path(@node.parent) %></li>
         <% end %>
 
         <% if !@node.is_leaf? %>
             <h3>Children:</h3>
-            <%= render partial: 'node', collection: @node.children!, as: :node %>
+            <%= render partial: 'node', collection: @node.children, as: :node %>
         <% end %>
 
     </ul>

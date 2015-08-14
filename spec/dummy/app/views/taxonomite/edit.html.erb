@@ -15,7 +15,7 @@
     <% if !@node.is_root? %>
     <h3>Parent:</h3>
     <ul>
-        <li><%= link_to @node.parent!.name, taxonomite_path(@node.parent!) %>
+        <li><%= link_to @node.parent.name, taxonomite_path(@node.parent) %>
             <%= link_to 'break', ['node', :breakparent, :id => @node] %></li>
     </ul>
     <% end %>
@@ -23,7 +23,7 @@
     <% if !@node.is_leaf? %>
     <h3>Children:</h3>
     <ul>
-        <% for child in @node.children! do %>
+        <% for child in @node.children do %>
             <li><%= link_to child.name, taxonomite_path(child) %>
                 <%= link_to 'Remove', ['node', :remchild, :node => child] %></li>
         <% end %>
@@ -33,7 +33,7 @@
     <h3>Add children:</h3>
     <ul>
         <% for p in Taxonomite::Node.all.each do %>
-            <% unless p == @node || @node.children!.find(p) %>
+            <% unless p == @node || @node.children.find(p) %>
                 <li><%= p.name %>  (<%= p.entity_type %>) -- <%= link_to 'Add', ['node', :addchild, :node => p] %></li>
             <% end %>
         <% end %>

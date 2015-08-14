@@ -203,11 +203,11 @@ class TaxonomiteController < ApplicationController
         end
 
         def do_remchild(ch)
-             @node.rem_child(ch)
+             @node.remove_child(ch)
         end
 
         def do_remparent
-            @node.rem_parent
+            @node.remove_parent
         end
 
         def node_params
