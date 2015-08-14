@@ -86,53 +86,6 @@ module Taxonomite
       return true
     end
 
-    # ##
-    # # Is this the direct owner of the node passed. This allows for auto-organizing
-    # # hierarchies. Sublcasses should override this method. Defaults to false - hence
-    # # no structure.
-    # # @param [Taxonomite::Node] node node in question
-    # # @return [Boolean] whether self should directly own node as a child, default is false
-    # def contains?(node)
-    #   false
-    # end
-    #
-    # ##
-    # # Find the direct owner of a node within the tree. Returns nil if no direct
-    # # owner exists within the tree starting at root self.
-    # # @param [Taxonomite::Node] node the node to evaluate
-    # # @return [Taxonomite::Node] the appropriate node or nil if none found
-    # def find_owner(node)
-    #   return self if self.should_own?(node)
-    #   if children.present?
-    #     children.each do |c|
-    #         c.find_owner(node, taxonomy).presence.each { |n| return n if !n.nil? }
-    #     end
-    #   end
-    #   return nil
-    # end
-    #
-    # ##
-    # # see if this node belongs directly under a particular parent; this allows for
-    # # assignment within a hierarchy. Subclasses should override to provide better
-    # # functionality. Default behavior asks the node if it contains(self).
-    # # @param [Taxonomite::Node] node the node to evaluate
-    # # @return [Boolean] whether this node should belong under the node
-    # def belongs_under(node)
-    #   node.find_owner(self) != nil
-    # end
-    #
-    # ##
-    # # see if this node belongs directly to another node (i.e. would appropriately)
-    # # be added as a child of the node. Default returns false. Convention to get
-    # # an organizing hierarchy to work is for belongs_under to return true when
-    # # belongs_directly_to is true as well. Default behaviour is to ask the node if
-    # # it directly_contains(self).
-    # # @param [Taxonomite::Node] node the node to evaluate
-    # # @return [Boolean] whether this node should belong directly under the node
-    # def belongs_directly_to(node)
-    #   node.contains?(self)
-    # end
-
     ##
     # add a child to this object; default is that each parent may have many children;
     # this will validate the child using thetaxonomy object passed in to the field.
