@@ -55,7 +55,7 @@ module Taxonomite
     # owner exists within the tree starting at root self. This works down the
     # tree (rather than up.) If root is nil it simply trys all of the Node objects
     # which match the appropriate parent entity_type for node. The default simply
-    # finds the first available valid parent depending upon the search method employed. 
+    # finds the first available valid parent depending upon the search method employed.
     # @param [Taxonomite::Node] node the node to evaluate
     # @param [Taxonomite::Node] root the root of the tree to evaluate; if nil will search for the parents of the node first
     # @return [Taxonomite::Node] the appropriate node or nil if none found
@@ -96,8 +96,18 @@ module Taxonomite
     # belongs_directly_to is true as well. Default behaviour is to ask the node if
     # it directly_contains(self).
     # @param [Taxonomite::Node] node to evaluate
+    # @return [Boolean] whether node contains this object (self)
     def belongs_directly_to(node)
       node.contains?(self)
+    end
+
+    ##
+    # try to add a child to a parent, with validation by this Taxonomy
+    # @param [Taxonomite::Node] parent the parent node
+    # @param [Taxonomite::Node] child the child node
+    def add(parent, child)
+      validate_relation(parent, child)
+      parent.children << child
     end
 
     protected

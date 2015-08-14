@@ -10,10 +10,15 @@ module Taxonomite
     case Node.config.use_tree_model
       when :self
         include ::Mongoid::Document
+
+        # make this protected such that other objects cannot access
         include Taxonomite::Tree
+        protected :children
+        protected :parent
 
         # configure the way the tree behaves
         before_destroy :nullify_children
+
       else
         raise RuntimeError, 'Invalid option for Node.config.use_tree_model: #{Node.config.use_tree_model}'
     end
