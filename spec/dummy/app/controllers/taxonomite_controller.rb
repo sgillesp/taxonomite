@@ -199,15 +199,15 @@ class TaxonomiteController < ApplicationController
     private
         # actual method is hidden to keep hidden
         def do_addchild(ch)
-             @node.children << ch
+             @node.add_child(ch)
         end
 
         def do_remchild(ch)
-             @node.children.delete(ch)
+             @node.rem_child(ch)
         end
 
         def do_remparent
-            @node.parent.delete(@node)
+            @node.rem_parent
         end
 
         def node_params

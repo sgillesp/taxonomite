@@ -2,7 +2,7 @@
 
 <% if @nodes %>
     <% for node in @nodes %>
-        <p><%= link_to node.name, taxonomite_path(node) %> (<%= node.entity_type %>):  <%= node.description %></p>
+        <p><%= link_to node.name, taxonomite_path(node) %> (<%= node.entity_type %>) </p>
     <% end %>
 <% else %>
     <p>No nodes defined.</p>

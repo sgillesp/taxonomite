@@ -4,22 +4,21 @@
 
         <p>Name:        <%= link_to @node.typeifiedname, taxonomite_path(@node) %></p>
         <p>Type:        <%= @node.entity_type %></p>
-        <p>Description: <%= @node.description %></p>
         <p>Population:  <%= @node.aggregate_leaves("countme") %>
 
-        <% if @node.parent %>
+        <% if !@node.is_root? %>
         <h3>Parent:</h3>
-            <li><%= link_to @node.parent.name, taxonomite_path(@node.parent) %></li>
+            <li><%= link_to @node.parent!.name, taxonomite_path(@node.parent!) %></li>
         <% end %>
 
-        <% if @node.has_children? %>
+        <% if !@node.is_leaf? %>
             <h3>Children:</h3>
-            <%= render partial: 'node', collection: @node.children, as: :node %>
+            <%= render partial: 'node', collection: @node.children!, as: :node %>
         <% end %>
 
     </ul>
 <% else %>
-    <p>Unable to find a Taxon.</p>
+    <p>Unable to find a node.</p>
 <% end %>
 
 <br/>
