@@ -52,20 +52,24 @@ module Taxonomite
       return s
     end
 
-    # subclasses should override to make sure the parent is appropriate for this child
-    # !! could move this to the tree structure
-    def is_valid_parent?(pa)
-        # !! need to figure out how to do this with regexp
-        unless self.invalid_parent_types.include?(pa.entity_type)
-          s = self.valid_parent_types
-          if s.include?('*')
-            return true
-          else
-            return s.include?(pa.entity_type)
-          end
-        else
-          return false
-        end
+    ##
+    # determine whether this is a valid parent of the object; subclasses could override
+    # to provide other functionality - though the intention is for the hierarchy to be
+    # enforced via a Taxonomy object
+    # @param [Taxonomite::Node] parent the parent node in question
+    # @return [Boolean] default is true
+    def is_valid_parent?(parent, taxonomy = nil)
+      taxonomy.nil? ? true : taxonomy.is_valid_relation?(parent, self)
+    end
+
+    ##
+    # determine whether this is a valid parent of the object; subclasses could override
+    # to provide other functionality - though the intention is for the hierarchy to be
+    # enforced via a Taxonomy object
+    # @param [Taxonomite::Node] child the parent node in question
+    # @return [Boolean] default is true
+    def is_valid_child?(child, taxonomy = nil)
+      taxonomy.nil? ? true : taxonomy.is_valid_relation?(self, child)
     end
 
     ##

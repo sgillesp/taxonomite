@@ -106,20 +106,6 @@ module Taxonomite
       end
     end
 
-    # perform validation on whether this parent is an acceptable parent or not?
-    # the base_class should have a method 'is_valid_parent?'  to invoke domain logic
-    # calls - invalid_parent_error(ch), if it exists, if the parent is invalid (for error handling)
-    # def validate_parent(pa)
-    #   if (pa == nil) || (pa == self)
-    #     self.invalid_parent_error(pa)
-    #   else
-    #     while par != nil do
-    #       unless self.is_valid_parent(pa)
-    #       end
-    #     end
-    #   end
-    # end
-
     # to do - find a way to add a Mongoid criteria to return all of the nodes for this object
     # descendants
     # descendants_and_self
