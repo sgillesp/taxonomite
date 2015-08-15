@@ -3,6 +3,16 @@ require 'taxonomite/tree'
 require 'mongoid'
 
 module Taxonomite
+  ##
+  # Class which defines a node within a tree hierarchy. Validation on addition
+  # of children and parents does occur in this class to provide for class specific
+  # validation in subclasses. That said, enforcing a taxonomy (rules about how the
+  # hierarchy is constructed) falls to the Taxonomite::Taxonomy class which is
+  # used to join parents and children according to specified rules. Thus, if
+  # someone does Obj.children << node -- no special validation will occur, other
+  # than that provided within this class or subclasses via is_valid_child? and
+  # is_valid_parent?
+  #
   class Node
     extend Taxonomite::ConfiguredGlobally
 
@@ -10,10 +20,13 @@ module Taxonomite
     case Node.config.use_tree_model
       when :self
         include ::Mongoid::Document
+
+        # make this protected such that other objects cannot access
         include Taxonomite::Tree
 
         # configure the way the tree behaves
         before_destroy :nullify_children
+
       else
         raise RuntimeError, 'Invalid option for Node.config.use_tree_model: #{Node.config.use_tree_model}'
     end
@@ -23,126 +36,119 @@ module Taxonomite
 
     belongs_to :owner, polymorphic: true # this is the associated object
 
-    # Data collection methods
-
     ##
-    # aggregates the results of calling method m on all leaves of the tree
-    # @param [Method] m method to call on owner and pass to children
-    # @return [] aggregated values from m on all children
-    def aggregate_leaves(m)
-      if self.leaf?
-        return self.owner.instance_eval(m) if self.owner != nil && self.owner.respond_to?(m)
-        return self.instance_eval(m) if self.respond_to?(m)
-        return 0
-      else
-        res = 0
-        self.children.each do |c|
-          res = res + c.aggregate_leaves(m)
-        end
-        return res
-      end
+    # evaluate a method on the owner of this node (if present). If an owner is
+    # not present, then the method is evaluated on this object. In either case
+    # a check is made to ensure that the object will respond_to? the method call.
+    # If the owner exists but does not respond to the method, then the method is
+    # tried on this node object in similar fashion.
+    # !!! SHOULD THIS JUST OVERRIDE instance_eval ??
+    # @param [Method] m method to call
+    # @return [] the result of the method call, or nil if unable to evaluate
+    def evaluate(m)
+      return self.owner.instance_eval(m) if self.owner != nil && self.owner.respond_to?(m)
+      return self.instance_eval(m) if self.respond_to?(m)
+      nil
     end
 
-    ## Typeification methods
-
+    ##
     # typeify name w entity (i.e. 'Washington state' vs. 'Seattle')
+    # @return [String] the typeified name
     def typeifiedname
       s = self.name
       s += (" " + self.entity_type.capitalize) if self.includetypeinname?
       return s
     end
 
-    # subclasses should override to make sure the parent is appropriate for this child
-    # !! could move this to the tree structure
-    def is_valid_parent?(pa)
-        # !! need to figure out how to do this with regexp
-        unless self.invalid_parent_types.include?(pa.entity_type)
-          s = self.valid_parent_types
-          if s.include?('*')
-            return true
-          else
-            return s.include?(pa.entity_type)
-          end
-        else
-          return false
-        end
+    ##
+    # determine whether child is a valid child based upon class evalution
+    # (outside of a taxonomy). Default is always true - subclasses should
+    # override if validation outside of a separate taxonomy class is desired.
+    # @param [Taxonomite::Node] child child to evaluate
+    # @return [Boolean] default is true
+    def is_valid_child?(child)
+      return true
     end
 
     ##
-    # Is this the direct owner of the node passed. This allows for auto-organizing
-    # hierarchies. Sublcasses should override this method. Defaults to false - hence
-    # no structure.
-    # @param [Taxonomite::Node] node node in question
-    # @param [Taxonomite::Taxonomy] taxonomy to use to determine the containment
-    # @return [Boolean] whether self should directly own node as a child, default is false
-    def contains?(node, taxonomy = nil)
-      false
+    # determine whether parent is a valid parent based upon class evalution
+    # (outside of a taxonomy). Default is always true - subclasses should
+    # override if validation outside of a separate taxonomy class is desired.
+    # @param [Taxonomite::Node] parent parent to evaluate
+    # @return [Boolean] default is true
+    def is_valid_parent?(child)
+      return true
     end
 
     ##
-    # Find the direct owner of a node within the tree. Returns nil if no direct
-    # owner exists within the tree starting at root self.
-    # @param [Taxonomite::Node] node the node to evaluate
-    # @param [Taxonomite::Taxonomy] taxonomy to use to determine the containment
-    # @return [Taxonomite::Node] the appropriate node or nil if none found
-    def find_owner(node, taxonomy = nil)
-      return nil if taxonomy.nil?
-      return self if self.should_own?(node,taxonomy)
-      if children.present?
-        children.each do |c|
-            c.find_owner(node, taxonomy).presence.each { |n| return n if !n.nil? }
-        end
-      end
-      return nil
+    # add a child to this object; default is that each parent may have many children;
+    # this will validate the child using thetaxonomy object passed in to the field.
+    # @param [Taxonomite::Node] child the node to evaluate
+    def add_child(child)
+      self.children << child
     end
 
     ##
-    # see if this node belongs directly under a particular parent; this allows for
-    # assignment within a hierarchy. Subclasses should override to provide better
-    # functionality. Default behavior asks the node if it contains(self).
-    # @param [Taxonomite::Node] node the node to evaluate
-    # @param [Taxonomite::Taxonomy] taxonomy to use to determine the containment
-    # @return [Boolean] whether this node should belong under the node
-    def belongs_under(node, taxonomy = nil)
-      node.find_owner(self, taxonomy) != nil
+    # add a parent for this object (default is that each object can have only one
+    # parent).
+    # this will validate the child using the taxonomy object passed in to the field.
+    # @param [Taxonomite::Node] parent the node to evaluate
+    # @param [Taxonomite::Taxonomy] taxonomy to use to validate the hierarchy
+    def add_parent(parent)
+      parent.add_child(self)
     end
 
     ##
-    # see if this node belongs directly to another node (i.e. would appropriately)
-    # be added as a child of the node. Default returns false. Convention to get
-    # self-organizing hierarchy to work is for belongs_under to return true when
-    # belongs_directly_to is true as well. Default behaviour is to ask the node if
-    # it directly_contains(self).
-    # @param [Taxonomite::Node] node the node to evaluate
-    # @param [Taxonomite::Taxonomy] taxonomy to use to determine the containment
-    # @return [Boolean] whether this node should belong directly under the node
-    def belongs_directly_to(node, taxonomy = nil)
-      node.contains?(self, taxonomy)
+    # remove a child from this node.
+    # @param [Taxonomite::Node] child node to remove
+    def remove_child(child)
+      self.children.delete(child)
+    end
+
+    ##
+    # remove the parent from this node. This should cause a reciprocal removal
+    # of self from the parent's children
+    def remove_parent
+      self.parent.remove_child(self) unless self.parent.nil?
     end
 
     protected
-
+        ##
         # include type in the name of this place (i.e. 'Washington state')
+        # @return [Boolean]
         def includetypeinname?
           return false
         end
 
-        # set the entity type (each subclass should override)
+        ##
+        # access the entity type for this Object
+        # @return [String]
         def get_entity_type
-          'Node'
+          'node'
         end
 
-        def validate_child(ch, taxonomy = nil)
-          if taxonomy.nil?
-            raise InvalidChild, "Cannot add #{ch.name} (#{ch.entity_type}) as child of #{self.name} (#{self.entity_type})" unless is_valid_child?(ch, taxonomy)
-          else
-            taxonomy.validate_relation(:parent => self, :child => ch)
-          end
-        end
+    private
+      ##
+      # determine whether the child is valid for this object; there are two
+      # layers to validation 1) provided by this method is_valid_parent? (and subclasses which override
+      # is_valid_parent?).
+      # @param [Taxonomite::Node] child the parent to validate
+      # @return [Boolean] whether validation was successful
+      def validate_child(child)
+        raise InvalidParent.create(self, child) unless (!child.nil? && is_valid_child?(child))
+        true
+      end
 
-        def validate_parent(pa, taxonomy = nil)
-          pa.validate_child(self, taxonomy) if !pa.nil?
-        end
+      ##
+      # determine whether the parent is valid for this object. See description of
+      # validate_child for more detail. This method calls validate_child to perform
+      # the actual validation.
+      # @param [Taxonomite::Node] parent the parent to validate
+      # @return [Boolean] whether validation was successful
+      def validate_parent(parent)
+        raise InvalidParent.create(parent, self) unless (!parent.nil? && is_valid_parent?(parent))
+        parent.validate_child(self)
+      end
 
   end   # class Node
 end # module Taxonomite

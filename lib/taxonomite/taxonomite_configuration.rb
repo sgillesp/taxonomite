@@ -44,7 +44,8 @@ module Taxonomite
       attr_accessor   :use_tree_model
 
     protected
-        # initialize
+        ##
+        # initialize object variables to defaults
         def initialize
             @use_tree_model = :self
         end
