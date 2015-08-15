@@ -6,23 +6,48 @@ module Taxonomite
   # Class which enforces a particular hierarchy among objects.
   class Taxonomy
     include Mongoid::Document
+    extend Taxonomite::ConfiguredGlobally
 
     # ? whether this needs to be stored in the database or not, as most
     # of the time would be instanciated by an application
-    field :down_taxonomy, type: Hash, default: ->{ Hash.new("") }
-    field :up_taxonomy, type: Hash, default: ->{ Hash.new("") }
+    field :down_taxonomy, type: Hash, default: ->{ Hash.new("*") }
+    field :up_taxonomy, type: Hash, default: ->{ Hash.new("*") }
+    field :require_both, type: Boolean, default: ->{ Taxonomite::Taxonomy.config.default_taxonomy_require_both }
+
+    ##
+    # verify according to the down-looking taxonomy hash.
+    # @param [Taxonomite::Node] parent the proposed parent node
+    # @param [Taxonomite::Node] child the proposed child node
+    # @return [Boolean] whether the child appropriate for the parent, default true
+    def is_valid_down_relation?(parent, child)
+      [self.down_taxonomy[parent.entity_type]].map { |t| return true if [child.entity_type, "*"].include?(t) }
+      false
+    end
+
+    ##
+    # verify according to the down-looking taxonomy hash.
+    # @param [Taxonomite::Node] parent the proposed parent node
+    # @param [Taxonomite::Node] child the proposed child node
+    # @return [Boolean] whether the child appropriate for the parent, default true
+    def is_valid_up_relation?(parent, child)
+      [self.up_taxonomy[child.entity_type]].map { |t| return true if [parent.entity_type, "*"].include?(t) }
+      false
+    end
 
     ##
     # determine whether the parent is a valid parent for the child. If no
     # taxonomy is defined (i.e. the hashes are empty) then default is to return
-    # true.
+    # true. Requires that *both* an updward and a downward relation are present if
+    # the require_both flag is set (default is true -- this can be set via Taxonomite::Configuration).
+    # This flag can also be passed into the method here.
     # @param [Taxonomite::Node] parent the proposed parent node
     # @param [Taxonomite::Node] child the proposed child node
+    # @param [Boolean] require_both to require both downward and upward match, or just one or the other
     # @return [Boolean] whether the child appropriate for the parent, default true
-    def is_valid_relation?(parent, child)
-      [self.down_taxonomy[parent.entity_type]].map { |t| return true if [child.entity_type, "*"].include?(t) }
-      [self.up_taxonomy[child.entity_type]].map { |t| return true if [parent.entity_type, "*"].include?(t) }
-      false
+    def is_valid_relation?(parent, child, require_both = self.require_both)
+      # depending upon the
+      require_both ? is_valid_down_relation?(parent, child) && is_valid_up_relation?(parent, child)
+                   : is_valid_down_relation?(parent, child) || is_valid_up_relation?(parent, child)
     end
 
     ##
