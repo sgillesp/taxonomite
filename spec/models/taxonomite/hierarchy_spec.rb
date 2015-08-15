@@ -28,6 +28,29 @@ module Taxonomite
                 end
             end
 
+            context 'taxonomy with multiple possibilities' do
+              before(:each) do
+                @taxonomy = FactoryGirl.build(:single_taxonomy_with_multiple)
+                @kingdom = FactoryGirl.build(:taxonomite_kingdom)
+                @phylum = FactoryGirl.build(:taxonomite_phylum)
+                @class = FactoryGirl.build(:taxonomite_class)
+                @species = FactoryGirl.build(:taxonomite_species)
+              end
+
+              it 'to allow appropriate in kingdom (under [ phylum, class, order] )' do
+                expect { @taxonomy.add(@kingdom, @phylum) }.not_to raise_error
+                expect { @taxonomy.add(@kingdom, @class) }.not_to raise_error
+                expect { @taxonomy.add(@kingdom, @species) }.to raise_error
+              end
+
+              it 'to disallow inappropriate relations in kingdom' do
+                expect { @taxonomy.add(@kingdom, @species) }.to raise_error
+                expect { @taxonomy.add(@kingdom, @kingdom) }.to raise_error
+              end
+
+            end
+
+
             context 'specific taxonomy rejections, with wildcard' do
               before(:each) do
                 @taxonomy = FactoryGirl.build(:taxonomite_single_wildcard_taxonomy)

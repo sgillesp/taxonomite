@@ -20,7 +20,7 @@ module Taxonomite
     # @param [Taxonomite::Node] child the proposed child node
     # @return [Boolean] whether the child appropriate for the parent, default true
     def is_valid_down_relation?(parent, child)
-      [self.down_taxonomy[parent.entity_type]].map { |t| return true if [child.entity_type, "*"].include?(t) }
+      [self.down_taxonomy[parent.entity_type]].flatten.map { |t| return true if [child.entity_type, "*"].include?(t) }
       false
     end
 
@@ -30,7 +30,7 @@ module Taxonomite
     # @param [Taxonomite::Node] child the proposed child node
     # @return [Boolean] whether the child appropriate for the parent, default true
     def is_valid_up_relation?(parent, child)
-      [self.up_taxonomy[child.entity_type]].map { |t| return true if [parent.entity_type, "*"].include?(t) }
+      [self.up_taxonomy[child.entity_type]].flatten.map { |t| return true if [parent.entity_type, "*"].include?(t) }
       false
     end
 

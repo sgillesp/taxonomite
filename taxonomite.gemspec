@@ -9,9 +9,9 @@ Gem::Specification.new do |s|
   s.version     = Taxonomite::VERSION
   s.authors     = ["sgillesp"]
   s.email       = ["masterofratios@gmail.com"]
-  s.homepage    = "http://github.com/sgillesp/places"
+  s.homepage    = "http://github.com/sgillesp/taxonomite"
   s.summary     = "Manages objects classified within a taxonomy and enforces a hierarchical tree structure. Persently works only with MongoDB."
-  s.description = "Manages objects classified within a taxonomy and enforces a hierarchical tree structure. Works only with MongoDB currently - may try to abstract the database layer with later versions."
+  s.description = "API documentaiton at: http://www.rubydoc.info/gems/taxonomite\n\nManages objects classified within a taxonomy and enforces a hierarchical tree structure. Works only with MongoDB currently - may try to abstract the database layer with later versions."
   s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
