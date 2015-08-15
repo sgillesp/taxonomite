@@ -1,4 +1,4 @@
-    <li><%= link_to "#{node.typeifiedname} (#{node.entity_type})", taxonomite_path(node) %></li>
+    <li>----<%= link_to "#{node.typeifiedname} (#{node.entity_type})", taxonomite_path(node) %></li>
     <% if node.has_children? %>
     <div class="nested_node">
         <%= render partial: 'node', collection: node.children, as: :node %>

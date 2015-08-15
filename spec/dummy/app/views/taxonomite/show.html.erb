@@ -4,7 +4,7 @@
 
         <p>Name:        <%= link_to @node.typeifiedname, taxonomite_path(@node) %></p>
         <p>Type:        <%= @node.entity_type %></p>
-        <p>Population:  <%= @node.aggregate_leaves("countme") %>
+        <p>Population:  <%= @node.leaves.size %>
 
         <% if !@node.is_root? %>
         <h3>Parent:</h3>
