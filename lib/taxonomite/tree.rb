@@ -142,7 +142,7 @@ module Taxonomite
     # get all of the leaves from this node downward
     # @return [Array] an array of all of the leaves
     def leaves
-      return self if self.is_leaf?
+      return [self] if self.is_leaf?
       self.children.collect { |c| c.leaves }.flatten
     end
 
