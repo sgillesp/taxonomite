@@ -73,11 +73,7 @@ module Taxonomite
     ##
     # return a chainable Mongoid criteria to get all descendants
     def descendants
-      doc = Array.new
-      children.each do |c|
-        doc += [c] + c.descendants
-      end
-      return doc
+      self.children.collect { |c| [c] + c.descendants }.flatten
     end
 
     ##
@@ -127,11 +123,7 @@ module Taxonomite
     # @return [Array] an array of all of the leaves
     def leaves
       return self if self.is_leaf?
-      a = Array.new
-      for child in self.children
-        a << child.leaves
-      end
-      return a.flatten
+      self.children.collect { |c| c.leaves }.flatten
     end
 
     ##
