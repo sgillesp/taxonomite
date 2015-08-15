@@ -93,27 +93,30 @@ module Taxonomite
               expect(@nodes[0].ancestor_of?(@nodes[2])).to eq(true)
           end
 
-          it 'accurately aggregates self and descendants' do
-              a = @nodes[0].self_and_descendants.map { |n| n.evaluate ('name') }
-              expect(a.size).to eq(4)
-              expect(a.include?(@nodes[3].name)).to eq(true)
+          it 'can aggregate ancestors' do
+            expect { @nodes[0].ancestors.map { |n| n.evaluate('name') } }.not_to raise_error
+          end
+
+          it 'accurately aggregates self and ancestors' do
+              a = @nodes[2].self_and_ancestors.map { |n| n.evaluate ('name') }
+              expect(a.size).to eq(3)
+              expect(a.include?(@nodes[3].name)).not_to eq(true)
               expect(a.include?(@nodes[2].name)).to eq(true)
               expect(a.include?(@nodes[1].name)).to eq(true)
               expect(a.include?(@nodes[0].name)).to eq(true)
           end
 
-          it 'accurately aggregates descendants without self' do
-            a = @nodes[0].descendants.map { |n| n.evaluate ('name') }
-            expect(a.size).to eq(3)
-            expect(a.include?(@nodes[3].name)).to eq(true)
-            expect(a.include?(@nodes[2].name)).to eq(true)
-            expect(a.include?(@nodes[1].name)).to eq(true)
-            expect(a.include?(@nodes[0].name)).not_to eq(true)
+          it 'accurately aggregates ancestors without self' do
+              a = @nodes[2].ancestors.map { |n| n.evaluate ('name') }
+              expect(a.size).to eq(2)
+              expect(a.include?(@nodes[3].name)).not_to eq(true)
+              expect(a.include?(@nodes[2].name)).not_to eq(true)
+              expect(a.include?(@nodes[1].name)).to eq(true)
+              expect(a.include?(@nodes[0].name)).to eq(true)
           end
 
-
           it 'can aggregate self and descendants' do
-            expect { @nodes[0].self_and_descendants.map { |n| n.evaluate('name') } }.not_to raise_error
+              expect { @nodes[0].self_and_descendants.map { |n| n.evaluate('name') } }.not_to raise_error
           end
 
           it 'accurately aggregates self and descendants' do

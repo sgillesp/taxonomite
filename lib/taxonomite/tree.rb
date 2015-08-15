@@ -71,6 +71,26 @@ module Taxonomite
     end
 
     ##
+    # return all ancestors of this node
+    def ancestors
+        a = Array.new
+        self.parent._ancestors(a) unless self.parent.nil?
+        return a
+    end
+
+    ##
+    # return self + all ancestors of this node
+    def self_and_ancestors
+      return [self] + self.ancestors
+    end
+
+    ##
+    # return a chainable Mongoid criteria to get all descendants
+    def descendants
+      self.children.collect { |c| [c] + c.descendants }.flatten
+    end
+
+    ##
     # return a chainable Mongoid criteria to get all descendants
     def descendants
       self.children.collect { |c| [c] + c.descendants }.flatten
@@ -133,12 +153,18 @@ module Taxonomite
       parent.nil? ? self : parent.root
     end
 
-
     # to do - find a way to add a Mongoid criteria to return all of the nodes for this object
     # descendants
     # descendants_and_self
     # ancestors
     # ancestors_and_self
+
+    protected
+
+    def _ancestors(a)
+      a << self
+      self.parent._ancestors(a) unless self.parent.nil?
+    end
 
   end # Tree
 end # Taxonomite
