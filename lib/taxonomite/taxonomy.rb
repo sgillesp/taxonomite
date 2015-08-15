@@ -9,8 +9,8 @@ module Taxonomite
 
     # ? whether this needs to be stored in the database or not, as most
     # of the time would be instanciated by an application
-    field :down_taxonomy, type: Hash
-    field :up_taxonomy, type: Hash
+    field :down_taxonomy, type: Hash, default: ->{ Hash.new("") }
+    field :up_taxonomy, type: Hash, default: ->{ Hash.new("") }
 
     ##
     # determine whether the parent is a valid parent for the child. If no
@@ -20,12 +20,8 @@ module Taxonomite
     # @param [Taxonomite::Node] child the proposed child node
     # @return [Boolean] whether the child appropriate for the parent, default true
     def is_valid_relation?(parent, child)
-      [self.down_taxonomy[parent.entity_type]].each do |t|
-        return true if t == child.entity_type
-      end
-      [self.up_taxonomy[child.entity_type]].each do |t|
-        return true if t == parent.entity_type
-      end
+      [self.down_taxonomy[parent.entity_type]].map { |t| return true if [child.entity_type, "*"].include?(t) }
+      [self.up_taxonomy[child.entity_type]].map { |t| return true if [parent.entity_type, "*"].include?(t) }
       false
     end
 

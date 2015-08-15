@@ -35,9 +35,19 @@ FactoryGirl.define do
     name { "#{Faker::Lorem.word.capitalize}" }
   end
 
-  factory :taxonomite_taxonomy, :class => 'Taxonomite::BiologyTaxonomy' do
+  factory :taxonomite_down_taxonomy, :class => 'Taxonomite::Taxonomy' do
     down_taxonomy { { 'kingdom' => 'phylum', 'phylum' => 'class', 'class' => 'order',
           'order' => 'family', 'family' => 'genus', 'genus' => 'species' } }
   end
+
+  factory :taxonomite_up_taxonomy, :class => 'Taxonomite::Taxonomy' do
+    up_taxonomy { { 'kingdom' => 'phylum', 'phylum' => 'class', 'class' => 'order',
+          'order' => 'family', 'family' => 'genus', 'genus' => 'species' }.invert }
+  end
+
+  factory :taxonomite_empty_taxonomy, :class => 'Taxonomite::Taxonomy' do
+    down_taxonomy { Hash.new("*") }
+  end
+
 
 end

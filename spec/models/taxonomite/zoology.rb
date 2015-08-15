@@ -117,12 +117,4 @@ module Taxonomite
       end
   end
 
-  class BiologyTaxonomy < Taxonomite::Taxonomy
-    protected
-    def initial_hash
-      { 'kingdom' => 'phylum', 'phylum' => 'class', 'class' => 'order',
-        'order' => 'family', 'family' => 'genus', 'genus' => 'species' }
-    end
-  end
-
 end # module Taxonomite
