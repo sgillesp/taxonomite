@@ -131,8 +131,8 @@ module Taxonomite
     # perform validation on whether this child is an acceptable child or not?
     # the base_class must have a method 'validate_child?' to implement domain logic there
     def validate_child!(ch)
-      raise InvalidChild "Attempted to add nil child to #{self}" if (ch == nil)
-      raise CircularRelation, "Circular relationship adding #{ch} to #{self}" if self.descendant_of?(ch)
+      raise InvalidChild.create(self, ch) if (ch == nil)
+      raise CircularRelation.create(self, ch) if self.descendant_of?(ch)
       if base_class.method_defined? :validate_child
          self.validate_child(ch)  # this should throw an error if not valid
       end

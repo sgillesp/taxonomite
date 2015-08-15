@@ -14,7 +14,7 @@ module Taxonomite
     def initialize(msg = "Invalid attempt to add Taxonomite::Node.", parent = nil, child = nil)
       msg = "Cannot add " +
             ( child.nil? ? "nil child" : "#{child.name} (#{child.entity_type})" ) +
-            ( parent.nil? ? "nil parent" : " as child of #{parent.name} (#{parent.entity_type})" )
+            " as child of #{parent.name} (#{parent.entity_type})" unless parent.nil?
       super(msg)
     end
   end
@@ -25,8 +25,8 @@ module Taxonomite
     def initialize(msg = "Invalid attempt to add Taxonomite::Node.", parent = nil, child = nil)
       unless (parent.nil? && child.nil?)
         msg = "Cannot add " +
-              ( child.nil? ? "nil child" : "#{child.name} #{child.entity_type})" ) +
-              ( parent.nil? ? "nil parent" : " as child of #{parent.name} (#{parent.entity_type})" )
+              ( child.nil? ? "nil child" : "#{child.name} (#{child.entity_type})" ) +
+              " as child of #{parent.name} (#{parent.entity_type})" unless parent.nil?
       end
       super(msg)
     end
@@ -37,8 +37,8 @@ module Taxonomite
 
     def initialize(msg = "Circular relation in attempt to add Taxonomite::Node.", parent = nil, child = nil)
       msg = "Circular reference in adding " +
-            ( child.nil? ? "nil child" : "#{child.name} #{child.entity_type})" ) +
-            ( parent.nil? ? "nil parent" : " as child of #{parent.name} (#{parent.entity_type})" )
+            ( child.nil? ? "nil child" : "#{child.name} (#{child.entity_type})" ) +
+            " as child of #{parent.name} (#{parent.entity_type})" unless parent.nil?
       super(msg)
     end
   end

@@ -49,5 +49,9 @@ FactoryGirl.define do
     down_taxonomy { Hash.new("*") }
   end
 
+  factory :taxonomite_single_wildcard_taxonomy, :class => 'Taxonomite::Taxonomy' do
+    down_taxonomy { { 'kingdom' => '*', 'phylum' => 'class' } }
+  end
+
 
 end

@@ -28,6 +28,34 @@ module Taxonomite
                 end
             end
 
+            context 'specific taxonomy rejections, with wildcard' do
+              before(:each) do
+                @taxonomy = FactoryGirl.build(:taxonomite_single_wildcard_taxonomy)
+                @kingdom = FactoryGirl.build(:taxonomite_kingdom)
+                @phylum = FactoryGirl.build(:taxonomite_phylum)
+                @class = FactoryGirl.build(:taxonomite_class)
+                @species = FactoryGirl.build(:taxonomite_species)
+              end
+
+              it 'to allow anything in kingdom (under "*")' do
+                expect { @taxonomy.add(@kingdom, @phylum) }.not_to raise_error
+                expect { @taxonomy.add(@kingdom, @class) }.not_to raise_error
+                expect { @taxonomy.add(@kingdom, @species) }.not_to raise_error
+              end
+
+              it 'to allow only class under phylum' do
+                expect { @taxonomy.add(@phylum, @class) }.not_to raise_error
+                expect { @taxonomy.add(@phylum, @species) }.to raise_error
+                expect { @taxonomy.add(@phylum, @kingdom) }.to raise_error
+              end
+
+              it 'to allow only nothing under class (empty)' do
+                expect { @taxonomy.add(@class, @phylum) }.to raise_error
+                expect { @taxonomy.add(@class, @species) }.to raise_error
+                expect { @taxonomy.add(@class, @kingdom) }.to raise_error
+              end
+            end
+
             context 'empty Taxonomy object' do
               before(:each) do
                   @taxonomy = FactoryGirl.build(:taxonomite_empty_taxonomy)
@@ -36,22 +64,12 @@ module Taxonomite
                   @species = FactoryGirl.build(:taxonomite_species)
               end
 
-              it 'to allow species in genus with empty taxonomy' do
+              it 'to allow anything anywhere' do
                   expect { @taxonomy.add(@genus, @species) }.not_to raise_error
-              end
-
-              it 'to allow genus in family with empty taxonomy' do
                   expect { @taxonomy.add(@family, @genus) }.not_to raise_error
-              end
-
-              it 'to allow genus in species with empty taxonomy' do
-                  expect { @taxonomy.add(@species, @genus) }.not_to raise_error
-              end
-
-              it 'to allow species in family with empty taxonomy' do
+                  expect { @taxonomy.add(@species, @genus) }.to raise_error # circular reference
                   expect { @taxonomy.add(@family, @species) }.not_to raise_error
               end
-
             end
 
             context 'with down-looking Taxonomy object' do
