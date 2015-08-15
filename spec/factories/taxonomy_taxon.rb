@@ -53,7 +53,7 @@ FactoryGirl.define do
   end
 
   factory :single_taxonomy_with_multiple, :class => 'Taxonomite::Taxonomy' do
-    down_taxonomy { { 'kingdom' => [ "phylum", "class", "order" ]} }
+    down_taxonomy { { 'kingdom' => [ "phylum", "class", "order" ] } }
   end
 
 
