@@ -23,10 +23,5 @@ RSpec.configure do |config|
     config.infer_spec_type_from_file_location!
 
     config.include FactoryGirl::Syntax::Methods
-    #config.include EngineControllerTestMonkeyPatch, :type => :controller
-    #config.before(:each, :type => :controller) { @routes = Taxonomite::Engine.routes }
-    #config.before(:each, :type => :routing)    { @routes = Taxonomite::Engine.routes }
-    # !! may want to change this later - once specifics about exceptions from Place
-    # !! are sorted out.
     RSpec::Expectations.configuration.warn_about_potential_false_positives = false
 end

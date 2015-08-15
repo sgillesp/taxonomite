@@ -1,12 +1,11 @@
 PATH
   remote: .
   specs:
-    taxonomite (0.1.0)
+    taxonomite (0.2.0)
       bson_ext (~> 1.5.0, >= 1.0)
       mongodb (~> 0.0.13, >= 0)
       mongoid (~> 4.0.2, >= 4.0)
       moped (~> 2.0, >= 2.0)
-      rails (~> 4.0, >= 4.0)
 
 GEM
   remote: https://rubygems.org/
@@ -112,7 +111,7 @@ GEM
       sprockets-rails
     rails-deprecated_sanitizer (1.0.3)
       activesupport (>= 4.2.0.alpha)
-    rails-dom-testing (1.0.6)
+    rails-dom-testing (1.0.7)
       activesupport (>= 4.2.0.beta, < 5.0)
       nokogiri (~> 1.6.0)
       rails-deprecated_sanitizer (>= 1.0.1)
@@ -132,7 +131,7 @@ GEM
     rspec-mocks (3.3.2)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.3.0)
-    rspec-rails (3.3.2)
+    rspec-rails (3.3.3)
       actionpack (>= 3.0, < 4.3)
       activesupport (>= 3.0, < 4.3)
       railties (>= 3.0, < 4.3)
@@ -161,8 +160,9 @@ DEPENDENCIES
   bundler
   factory_girl_rails
   faker
+  rails (~> 4.0, >= 4.0)
   rake
-  rspec-rails (= 3.3.2)
+  rspec-rails
   taxonomite!
 
 BUNDLED WITH

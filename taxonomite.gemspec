@@ -17,13 +17,13 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["spec/**/*"]
 
-  s.add_dependency "rails", '~> 4.0', '>= 4.0'
   s.add_dependency "mongodb", '~> 0.0.13', '>= 0'
   s.add_dependency "moped", '~> 2.0', '>= 2.0'
   s.add_dependency "mongoid", '~> 4.0.2', '>= 4.0'
   s.add_dependency "bson_ext", '~> 1.5.0', '>= 1.0'
 
-  s.add_development_dependency "rspec-rails", "3.3.2"
+  s.add_development_dependency "rails", '~> 4.0', '>= 4.0'
+  s.add_development_dependency "rspec-rails"
   s.add_development_dependency "factory_girl_rails"
   s.add_development_dependency "bundler"
   s.add_development_dependency "rake"
