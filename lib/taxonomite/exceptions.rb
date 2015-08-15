@@ -13,7 +13,7 @@ module Taxonomite
 
     def initialize(msg = "Invalid attempt to add Taxonomite::Node.", parent = nil, child = nil)
       msg = "Cannot add " +
-            ( child.nil? ? "nil child" : "#{child.name} #{child.entity_type})" ) +
+            ( child.nil? ? "nil child" : "#{child.name} (#{child.entity_type})" ) +
             ( parent.nil? ? "nil parent" : " as child of #{parent.name} (#{parent.entity_type})" )
       super(msg)
     end
