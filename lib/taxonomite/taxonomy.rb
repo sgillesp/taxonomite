@@ -9,18 +9,22 @@ module Taxonomite
 
     # ? whether this needs to be stored in the database or not, as most
     # of the time would be instanciated by an application
-    field :taxonomy, type: Hash, default: -> { self.initial_hash }  # the underlying hash
+    field :down_taxonomy, type: Hash
+    field :up_taxonomy, type: Hash
 
     ##
     # determine whether the parent is a valid parent for the child. If no
-    # taxonomy is defined (i.e. the hash is empty) then default is to return
+    # taxonomy is defined (i.e. the hashes are empty) then default is to return
     # true.
     # @param [Taxonomite::Node] parent the proposed parent node
     # @param [Taxonomite::Node] child the proposed child node
     # @return [Boolean] whether the child appropriate for the parent, default true
     def is_valid_relation?(parent, child)
-      Array(self.taxonomy[parent.entity_type]).each do |t|
+      [self.down_taxonomy[parent.entity_type]].each do |t|
         return true if t == child.entity_type
+      end
+      [self.up_taxonomy[child.entity_type]].each do |t|
+        return true if t == parent.entity_type
       end
       false
     end
@@ -32,7 +36,7 @@ module Taxonomite
     def valid_parent_types(child)
       # could be a node object, or maybe a string
       str = child.respond_to?(:entity_type) ? child.entity_type : child
-      # statement to find all hash results containing child
+      self.up_taxonomy[str]
     end
 
     ##
@@ -42,7 +46,7 @@ module Taxonomite
     def valid_child_types(parent)
       # could be a node object, or maybe a string
       str = parent.respond_to?(:entity_type) ? parent.entity_type : child
-      self.taxonomy[str]
+      self.down_taxonomy[str]
     end
 
     # ##
@@ -100,20 +104,20 @@ module Taxonomite
     # @param [Taxonomite::Node] parent the parent node
     # @param [Taxonomite::Node] child the child node
     def add(parent, child)
-      raise InvalidChild, "Cannot add #{child.name} (#{child.entity_type}) as child of #{parent.name} (#{parent.entity_type})" unless self.is_valid_relation?(parent, child)
+      raise InvalidChild::create(parent,child) unless self.is_valid_relation?(parent, child)
       parent.add_child(child)
     end
 
     protected
 
-    ##
-    # return the default initial hash for this object, default is empty.
-    # Subclasses should override to provide a default hash. A hierarchy could
-    # be createed with this method alone.
-    # @return [Hash] the default (initialized) taxonomy_hash values
-    def initial_hash
-      {}
-    end
+    # ##
+    # # return the default initial hash for this object, default is empty.
+    # # Subclasses should override to provide a default hash. A hierarchy could
+    # # be createed with this method alone.
+    # # @return [Hash] the default (initialized) taxonomy_hash values
+    # def initial_hash
+    #   {}
+    # end
 
   end   # class Taxonomy
 end # module Taxonomite
