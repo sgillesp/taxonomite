@@ -4,7 +4,7 @@ require 'models/taxonomite/zoology'
 module Taxonomite
     RSpec.describe Tree, type: :model do
 
-        context 'model function' do
+        context 'node function' do
             let!(:node) { build(:taxonomite_node) }
 
             it 'instantiates a node' do
@@ -28,6 +28,12 @@ module Taxonomite
                 expect { node.parent }.not_to raise_error
             end
 
+            it 'has a working == operator' do
+                node2 = build(:taxonomite_node)
+                expect(node == node).to eq(true)
+                expect(node == node2).to eq(false)
+                expect(node != node2).to eq(true)
+            end
         end
 
     end
