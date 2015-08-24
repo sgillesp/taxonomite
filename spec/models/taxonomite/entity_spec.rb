@@ -28,6 +28,10 @@ module Taxonomite
                 expect(being.get_taxonomy_node.name).to eq(being.name)
             end
 
+            it 'can get to the entity through the taxonomy_node' do
+              expect(being.get_taxonomy_node.owner).to eq(being)
+            end
+
         end
 
     end
