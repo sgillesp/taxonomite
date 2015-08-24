@@ -1,4 +1,4 @@
-require 'taxonomite/taxonomite_configuration'
+require 'taxonomite/configuration'
 require 'taxonomite/tree'
 require 'mongoid'
 
@@ -14,10 +14,9 @@ module Taxonomite
   # is_valid_parent?
   #
   class Node
-    extend Taxonomite::ConfiguredGlobally
 
     # handle configurable options - this is essentially how the tree is stored.
-    case Node.config.use_tree_model
+    case Taxonomite.config.use_tree_model
       when :self
         include ::Mongoid::Document
 
@@ -28,7 +27,7 @@ module Taxonomite
         before_destroy :nullify_children
 
       else
-        raise RuntimeError, 'Invalid option for Node.config.use_tree_model: #{Node.config.use_tree_model}'
+        raise RuntimeError, 'Invalid option for Taxonomite.config.use_tree_model: #{Taxonomite.config.use_tree_model}'
     end
 
     field :name, type: String         # name of this particular object (not really node)

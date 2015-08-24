@@ -1,4 +1,4 @@
-require 'taxonomite/taxonomite_configuration'
+require 'taxonomite/configuration'
 require 'taxonomite/tree'
 
 module Taxonomite
@@ -6,13 +6,12 @@ module Taxonomite
   # Class which enforces a particular hierarchy among objects.
   class Taxonomy
     include Mongoid::Document
-    extend Taxonomite::ConfiguredGlobally
 
     # ? whether this needs to be stored in the database or not, as most
     # of the time would be instanciated by an application
     field :down_taxonomy, type: Hash, default: ->{ Hash.new("*") }
     field :up_taxonomy, type: Hash, default: ->{ Hash.new("*") }
-    field :require_both, type: Boolean, default: ->{ Taxonomite::Taxonomy.config.default_taxonomy_require_both }
+    field :require_both, type: Boolean, default: ->{ Taxonomite.config.default_taxonomy_require_both }
 
     ##
     # verify according to the down-looking taxonomy hash.

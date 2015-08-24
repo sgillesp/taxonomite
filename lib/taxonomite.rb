@@ -1,3 +1,4 @@
+require 'taxonomite/configuration'
 require 'taxonomite/node'
 require 'taxonomite/entity'
 
