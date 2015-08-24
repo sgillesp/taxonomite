@@ -1,5 +1,4 @@
 require 'taxonomite/configuration'
-require 'taxonomite/tree'
 require 'mongoid'
 
 module Taxonomite
@@ -19,6 +18,7 @@ module Taxonomite
     case Taxonomite.config.use_tree_model
       when :self
         include ::Mongoid::Document
+        require 'taxonomite/tree'
 
         # make this protected such that other objects cannot access
         include Taxonomite::Tree
