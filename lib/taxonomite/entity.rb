@@ -7,17 +7,14 @@ module Taxonomite
     extend ActiveSupport::Concern
 
     included do
-      has_one :taxonomy_node, class_name: 'Taxonomite::Node', as: :owner, validate: true
+      has_one :taxonomy_node, as: :owner, class_name: 'Taxonomite::Node'
       before_save :do_setup
 
       class_eval "def base_class; ::#{self.name}; end"
     end
 
     def get_taxonomy_node
-      if (self.taxonomy_node == nil)
-        self.taxonomy_node = self.create_taxonomy_node
-      end
-      self.taxonomy_node
+      self.taxonomy_node ||= self.create_taxonomy_node
     end
 
     protected
