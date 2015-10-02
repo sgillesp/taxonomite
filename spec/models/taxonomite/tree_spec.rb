@@ -144,16 +144,6 @@ module Taxonomite
           it 'accurately aggregates leaf values' do
               a = @nodes[0].leaves.map { |n| n.evaluate('name') }
 
-              # i = 0
-              # @nodes.each do |n|
-              #   print "Node[#{i}]: #{n.name} children: ["; n.children.each { |c| print " #{c.name}" }; puts " ]"
-              #   puts "\t aggregated value: #{a.find_index(n.name)}"
-              #   i += 1
-              # end
-              # puts "nodes: #{@nodes[0].aggregate('name')}"
-              # print "leaves: ["; @nodes[0].leaves.each { |l| print " #{l.name}" }; puts " ]"
-              # puts "aggregated leaves: #{a}"
-
               expect(a.include?(@nodes[3].name)).to eq(true)
               expect(a.include?(@nodes[2].name)).to eq(true)
               expect(a.include?(@nodes[1].name)).not_to eq(true)
