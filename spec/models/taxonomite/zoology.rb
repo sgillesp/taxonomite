@@ -3,7 +3,11 @@ require 'taxonomite/entity'
 require 'taxonomite/taxonomy'
 
 module Taxonomite
-  class Kingdom < Taxonomite::Node
+  class Taxon < Taxonomite::Node
+    field :name, type: String
+  end
+
+  class Kingdom < Taxon
 
     protected
     def get_entity_type
@@ -16,7 +20,7 @@ module Taxonomite
 
   end   # class Kingdom
 
-  class Phylum < ::Taxonomite::Node
+  class Phylum < Taxon
 
     protected
     def get_entity_type
@@ -28,7 +32,7 @@ module Taxonomite
     end
   end
 
-  class Class < ::Taxonomite::Node
+  class Class < Taxon
 
     protected
     def get_entity_type
@@ -40,7 +44,7 @@ module Taxonomite
     end
   end
 
-  class Order < ::Taxonomite::Node
+  class Order < Taxon
 
     protected
     def get_entity_type
@@ -52,7 +56,7 @@ module Taxonomite
     end
   end
 
-  class Family < ::Taxonomite::Node
+  class Family < Taxon
 
     protected
     def get_entity_type
@@ -64,7 +68,7 @@ module Taxonomite
     end
   end
 
-  class Genus < ::Taxonomite::Node
+  class Genus < Taxon
 
     protected
     def get_entity_type
@@ -76,7 +80,7 @@ module Taxonomite
     end
   end
 
-  class Species < ::Taxonomite::Node
+  class Species < Taxon
 
     def countme
       return 1

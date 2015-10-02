@@ -15,11 +15,6 @@ module Taxonomite
                 expect { node.destroy }.not_to raise_error
             end
 
-            it 'sets the name' do
-                node.name = "new_name"
-                expect(node.name).to eq("new_name")
-            end
-
             it 'allow access to children' do
                 expect { node.children }.not_to raise_error
             end

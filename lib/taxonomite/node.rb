@@ -30,9 +30,7 @@ module Taxonomite
         raise RuntimeError, 'Invalid option for Taxonomite.config.use_tree_model: #{Taxonomite.config.use_tree_model}'
     end
 
-    field :name, type: String         # name of this particular object (not really node)
     field :entity_type, type: String, default: ->{ self.get_entity_type }  # type of entity (i.e. state, county, city, etc.)
-
     belongs_to :owner, polymorphic: true # this is the associated object
 
     ##
@@ -48,15 +46,6 @@ module Taxonomite
       return self.owner.instance_eval(m) if self.owner != nil && self.owner.respond_to?(m)
       return self.instance_eval(m) if self.respond_to?(m)
       nil
-    end
-
-    ##
-    # typeify name w entity (i.e. 'Washington state' vs. 'Seattle')
-    # @return [String] the typeified name
-    def typeifiedname
-      s = self.name
-      s += (" " + self.entity_type.capitalize) if self.includetypeinname?
-      return s
     end
 
     ##
@@ -112,12 +101,6 @@ module Taxonomite
     end
 
     protected
-        ##
-        # include type in the name of this place (i.e. 'Washington state')
-        # @return [Boolean]
-        def includetypeinname?
-          return false
-        end
 
         ##
         # access the entity type for this Object

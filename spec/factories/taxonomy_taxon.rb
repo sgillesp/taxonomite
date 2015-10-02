@@ -3,7 +3,12 @@ require 'factory_girl_rails'
 require 'faker'
 
 FactoryGirl.define do
+
   factory :taxonomite_node, :class => 'Taxonomite::Node' do
+    # nodes are nameless now
+  end
+
+  factory :taxonomite_taxon, :class => 'Taxonomite::Taxon' do
     name { Faker::Lorem.word.capitalize }
   end
 
