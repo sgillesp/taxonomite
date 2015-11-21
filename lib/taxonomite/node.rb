@@ -100,6 +100,42 @@ module Taxonomite
       self.parent.remove_child(self) unless self.parent.nil?
     end
 
+    ##
+    # is this node equal to another node
+    # @param n node to compare
+    # @return [Boolean] are these nodes equal
+    def equal_to_node? (n)
+      self.value == n.value
+    end
+
+    ##
+    # is this node equal to another node
+    # @param val value to compare to, this should be a particular value type
+    # @return [Boolean] are these nodes equal
+    def equal_to? (val)
+      self.value == val
+    end
+
+    ##
+    # access a value for this node, default is nil; should be overloaded
+    # by subclasses.
+    # @return value
+    def value
+      nil
+    end
+
+    ##
+    # create a hash of this node in its position in the tree, looking
+    # backward toward the parents
+    # @return [Hash] a hash of key,value pairs of entity_type, value
+    def hash_up
+      rv = Hash.new
+      self.self_and_ancestors.each do |c|
+        rv[c.entity_type] = c.value
+      end
+      return rv
+    end
+
     protected
 
         ##

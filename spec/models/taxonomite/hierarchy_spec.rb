@@ -125,6 +125,7 @@ module Taxonomite
                   @taxonomy = FactoryGirl.build(:taxonomite_up_taxonomy)
                   @family = FactoryGirl.build(:taxonomite_family)
                   @genus = FactoryGirl.build(:taxonomite_genus)
+                  @genus2 = FactoryGirl.build(:taxonomite_genus)
                   @species = FactoryGirl.build(:taxonomite_species)
               end
 
@@ -143,6 +144,42 @@ module Taxonomite
               it 'not to allow species in family with taxonomy present' do
                   expect { @taxonomy.add(@family, @species) }.to raise_error
               end
+
+            end
+
+            context 'places taxons within the the taxonomy' do
+              before (:each) do
+                @taxonomy = FactoryGirl.build(:taxonomite_down_taxonomy)
+                @family = FactoryGirl.build(:taxonomite_family)
+                @genus = FactoryGirl.build(:taxonomite_genus)
+                @genus2 = FactoryGirl.build(:taxonomite_genus)
+                @species = FactoryGirl.build(:taxonomite_species)
+                @taxonomy.add(@family, @genus)
+                @taxonomy.add(@genus, @species)
+                @taxonomy.add(@genus, FactoryGirl.build(:taxonomite_species))
+                @taxonomy.add(@family, @genus2)
+              end
+
+              it 'correctly determines that a taxonomy location is valid' do
+                expect(@taxonomy.is_parent(@genus, @species.hash_up)).to eq(true)
+              end
+
+              it 'correctly determines that a taxonomy location is invalid' do
+                expect(@taxonomy.is_parent(@genus2, @species.hash_up)).to eq(false)
+              end
+
+              it 'correctly determines that a taxonomy location is within the same taxonomy tree' do
+
+              end
+
+              it 'correctly finds the appropriate parent for a particular entity, with down-looking taxonomy' do
+              end
+
+              it 'correctly finds the appropriate parent for a particular entity, with up-looking taxonomy' do
+              end
+
+
+
             end
 
       end

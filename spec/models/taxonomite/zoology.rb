@@ -5,6 +5,10 @@ require 'taxonomite/taxonomy'
 module Taxonomite
   class Taxon < Taxonomite::Node
     field :name, type: String
+
+    def value
+      return self.name
+    end
   end
 
   class Kingdom < Taxon

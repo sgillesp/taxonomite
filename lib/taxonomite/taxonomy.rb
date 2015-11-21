@@ -128,6 +128,31 @@ module Taxonomite
       parent.add_child(child)
     end
 
+    ##
+    # determine if the node represents a particular location within a
+    # taxonomy.
+    # @param [Taxonomite::Node] n the node to determine
+    # @param [Hash] h the hashed location within the taxonomy
+    # @return [Boolean] whether or not the location could be the same
+    def is_parent (n, h)
+      node_hash = n.hash_up
+      self.down_taxonomy.each do |t|
+        return false unless node_hash[t.first] == h[t.first]
+      end
+      return true
+    end
+
+    def is_within_down_taxonomy (n, h)
+      node_hash = n.hash_up
+      puts "hash_in_taxonomy ( {#{n.entity_type}, #{n.value}}, #{h})"
+      self.down_taxonomy.each do |t|
+        puts "Checking [#{t.first},#{node_hash[t.first]}] against [#{t.first},#{h[t.first]}]"
+        return false unless node_hash[t.first] == h[t.first]
+      end
+      puts
+      return true
+    end
+
     protected
 
     # ##
