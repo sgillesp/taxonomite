@@ -1,4 +1,4 @@
-# taxonomite/creator.rb
+# taxonomite/crawler.rb
 
 require 'taxonomite/configuration'
 require 'taxonomite/node'
@@ -8,8 +8,9 @@ require 'taxonomite/taxonomy'
 module Taxonomite
 
   ##
-  # Mix-in which allows for enforcing an creating a particular taxonomy.
-  class Creator
+  # Class which will traverse a taxonomy tree and find a particular pattern
+  # of nodes within the tree.
+  class Crawler
     # extend ActiveSupport::Concern
     #
     # included do
@@ -91,6 +92,6 @@ module Taxonomite
     end
 
 
-  end # module creator
+  end # module crawler
 
 end # module Taxonomite

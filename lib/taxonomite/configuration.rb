@@ -24,7 +24,7 @@ module Taxonomite
     # The configuration class for Taxonomite gem. All classes which are configured via
     # this mechanism should extend Taxonomite::Configured (below).
     class Configuration
-    
+
       # future versions may extend to using different tree models
       # - for now uses a custom tree model (:self)
       attr_accessor   :use_tree_model

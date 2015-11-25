@@ -1,7 +1,7 @@
 
 require 'taxonomite/entity'
 require 'taxonomite/taxonomy'
-require 'taxonomite/creator'
+require 'taxonomite/crawler'
 
 module Taxonomite
   class Taxon < Taxonomite::Node
