@@ -1,12 +1,17 @@
 
 require 'taxonomite/entity'
 require 'taxonomite/taxonomy'
+require 'taxonomite/creator'
 
 module Taxonomite
   class Taxon < Taxonomite::Node
     field :name, type: String
 
     def value
+      return self.name
+    end
+
+    def to_s
       return self.name
     end
   end

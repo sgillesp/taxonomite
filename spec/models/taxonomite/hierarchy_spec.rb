@@ -154,6 +154,7 @@ module Taxonomite
                 @genus = FactoryGirl.build(:taxonomite_genus)
                 @genus2 = FactoryGirl.build(:taxonomite_genus)
                 @species = FactoryGirl.build(:taxonomite_species)
+                @creator = FactoryGirl.build(:taxonomite_creator)
                 @taxonomy.add(@family, @genus)
                 @taxonomy.add(@genus, @species)
                 @taxonomy.add(@genus, FactoryGirl.build(:taxonomite_species))
@@ -173,6 +174,8 @@ module Taxonomite
               end
 
               it 'correctly finds the appropriate parent for a particular entity, with down-looking taxonomy' do
+                expect(@creator.find_parent_down(@species,@family)).to eq(@genus)
+                expect(@creator.find_parent_down(@species,@family)).not_to eq(@genus2)
               end
 
               it 'correctly finds the appropriate parent for a particular entity, with up-looking taxonomy' do

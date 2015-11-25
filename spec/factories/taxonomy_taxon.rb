@@ -53,6 +53,9 @@ FactoryGirl.define do
   factory :taxonomite_empty_taxonomy, :class => 'Taxonomite::Taxonomy' do
   end
 
+  factory :taxonomite_creator, :class => 'Taxonomite::Creator' do
+  end
+
   factory :taxonomite_single_wildcard_taxonomy, :class => 'Taxonomite::Taxonomy' do
     down_taxonomy { { 'kingdom' => '*', 'phylum' => 'class' } }
   end
